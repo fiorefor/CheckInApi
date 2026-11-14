@@ -1,48 +1,111 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System;
 using CheckInApi.Modelos.Exceptions;
 
 namespace CheckInApi.Modelos
 {
     public class Pasaje
     {
-        private string _tipoVuelo;
-        private string _tipoTarifa;
-        private string _nroVuelo;
+        private int _idPasaje;
+        private decimal _precioBase;
+        private decimal _precioFinal;
+        private DateTime _fechaEmision;
+        private string _dniPasajero = string.Empty;
+        private string _asiento = string.Empty;
+        private string _tipoVuelo = string.Empty;
+        private string _tipoTarifa = string.Empty;
+        private string _nroVuelo = string.Empty;
 
-        public Pasaje(string tipoVuelo, string tipoTarifa, string nroVuelo)
+        public Pasaje() { }
+
+        public Pasaje(int idPasaje, decimal precioBase, decimal precioFinal, DateTime fechaEmision, string dniPasajero, string asiento, string tipoVuelo, string tipoTarifa, string nroVuelo)
         {
-            if (tipoVuelo != "N" && tipoVuelo != "I")
+            if (string.IsNullOrEmpty(dniPasajero))
             {
-                throw new DatosInvalidosException("TipoVuelo", "El tipo de vuelo debe ser 'N' (Nacional) o 'I' (Internacional).");
-            }
-            if (tipoTarifa != "P" && tipoTarifa != "B" && tipoTarifa != "PE" && tipoTarifa != "F")
-            {
-                throw new DatosInvalidosException("TipoTarifa", "El tipo de tarifa debe ser 'P' (Primera), 'B' (Business), 'PE' (Premium Economy) o 'F' (Economy).");
+                throw new DatosInvalidosException("Dni Pasajero", "El DNI del pasajero no puede estar vacío.");
             }
             if (string.IsNullOrWhiteSpace(nroVuelo))
             {
-                throw new DatosInvalidosException("NroVuelo", "El número de vuelo no puede estar vacío.");
+                throw new DatosInvalidosException("Número de Vuelo", "El número de vuelo no puede estar vacío.");
             }
-            _tipoVuelo = tipoVuelo.Trim().ToUpper();
-            _tipoTarifa = tipoTarifa.Trim().ToUpper();
+            if (string.IsNullOrWhiteSpace(asiento))
+            {
+                throw new DatosInvalidosException("Asiento", "El asiento no puede estar vacío.");
+            }
+            string vueloNorm = tipoVuelo?.Trim().ToUpper() ?? "";
+            if (vueloNorm != "N" && vueloNorm != "I")
+            {
+                throw new DatosInvalidosException("Tipo de Vuelo", "El tipo de vuelo debe ser 'Nacional' o 'Internacional'.");
+            }
+            string tarifaNorm = tipoTarifa?.Trim().ToUpper() ?? "";
+            if (tarifaNorm != "P" && tarifaNorm != "B" && tarifaNorm != "PE" && tarifaNorm != "F")
+            {
+                throw new DatosInvalidosException("Tipo de Tarifa", "El tipo de tarifa debe ser 'P' (Primera), 'B' (Business), 'PE' (Premium Economy) o 'F' (Economy).");
+            }
+            if (precioBase <= 0)
+            {
+                throw new DatosInvalidosException("Precio Base", "El precio base no puede ser mayor a cero.");
+            }
+            _idPasaje = idPasaje;
+            _precioBase = precioBase;
+            _precioFinal = precioFinal;
+            _dniPasajero = dniPasajero.Trim();
+            _asiento = asiento.Trim().ToUpper();
+            _tipoVuelo = vueloNorm;
+            _tipoTarifa = tarifaNorm;
+            _fechaEmision = fechaEmision;
             _nroVuelo = nroVuelo.Trim().ToUpper();
         }
 
+        public Pasaje(string tipoVuelo, string tipoTarifa, string nroVuelo)
+            : this(0, 1m, 1m, DateTime.Now, "0", "1", tipoVuelo, tipoTarifa, nroVuelo)
+        {
+        }
+
+        public int IdPasaje
+        {
+            get { return _idPasaje; }
+            set { _idPasaje = value; }
+        }
+        public decimal PrecioBase
+        {
+            get { return _precioBase; }
+            set { _precioBase = value; }
+        }
+        public decimal PrecioFinal
+        {
+            get { return _precioFinal; }
+            set { _precioFinal = value; }
+        }
+        public DateTime FechaEmision
+        {
+            get { return _fechaEmision; }
+            set { _fechaEmision = value; }
+        }
+        public string DniPasajero
+        {
+            get { return _dniPasajero; }
+            set { _dniPasajero = value; }
+        }
+        public string Asiento
+        {
+            get { return _asiento; }
+            set { _asiento = value; }
+        }
         public string TipoVuelo
         {
             get { return _tipoVuelo; }
+            set { _tipoVuelo = value; }
         }
-
         public string TipoTarifa
         {
             get { return _tipoTarifa; }
+            set { _tipoTarifa = value; }
         }
-
         public string NroVuelo
         {
             get { return _nroVuelo; }
+            set { _nroVuelo = value; }
         }
     }
 }
