@@ -3,3 +3,8 @@
 ################################################################################
 
 /.vs
+
+# Archivos generados al compilar (cada uno los gennera) 
+bin/
+obj/
+*.user
