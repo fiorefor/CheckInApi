@@ -7,6 +7,7 @@ builder.Services.AddControllers();
 // modificamos desde acá
 string path = Path.Combine(AppContext.BaseDirectory, "pasajeros.txt");
 builder.Services.AddScoped<IPasajeroRepository>(provider => new PasajeroRepositoryArchivo(path));
+builder.Services.AddSingleton<IPasajeRepository, PasajeRepository>();
 builder.Services.AddScoped<PasajeroService>();
 builder.Services.AddScoped<CheckInService>();
 

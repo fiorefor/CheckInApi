@@ -1,37 +1,69 @@
-using CheckInApi.Modelos;
+using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using CheckInApi.Modelos;
+using CheckInApi.Modelos.Exceptions;
+using CheckInApi.Servicios;
 
-[ApiController]
-[Route("api/[controller]")]
-
-public class PasajeController : ControllerBase
+namespace CheckInApi.Controllers
 {
-    private readonly CheckInService servicio;
-
-    public PasajeController(CheckInService servicio)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class PasajesController : ControllerBase
     {
-        this.servicio = servicio;
-    }
+        private readonly PasajeService _pasajeService;
 
-    [HttpGet("{idPasajero:int}")]
-    public ActionResult<Pasaje> ObtenerPasaje(int idPasajero)
-    {
-        var pasaje = servicio.ObtenerPasaje(idPasajero);
-        if (pasaje == null)
+        public PasajesController(PasajeService pasajeService)
         {
-            return NotFound($"No se encontró un pasaje para el pasajero con ID: {idPasajero}");
+            _pasajeService = pasajeService;
         }
-        return Ok(pasaje);
-    }
 
-    [HttpPost("{idPasajero:int}")]
-    public ActionResult AgregarPasaje(int idPasajero, [FromBody] PasajeRequest datos)
-    {
-        var (exito, mensaje) = servicio.AgregarPasaje(idPasajero, datos);
-        if (!exito)
+        [HttpGet]
+        public IActionResult GetAll()
         {
-            return BadRequest(mensaje);
+            return Ok(_pasajeService.ListarPasajes());
         }
-        return Ok(mensaje);
+
+        [HttpGet("{id}")]
+        public IActionResult GetById(int id)
+        {
+            try
+            {
+                var pasaje = _pasajeService.ObtenerPasajePorId(id);
+                return Ok(pasaje);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { mensaje = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Create([FromBody] PasajeRequest request)
+        {
+            try
+            {
+                var creado = _pasajeService.EmitirPasaje(request);
+                return CreatedAtAction(nameof(GetById), new { id = creado.IdPasaje }, creado);
+            }
+            catch (DatosInvalidosException ex)
+            {
+                return BadRequest(new { campo = ex.Campo, mensaje = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            bool eliminado = _pasajeService.EliminarPasaje(id);
+            if (!eliminado)
+                return NotFound(new { mensaje = $"No existe el pasaje con ID {id}." });
+
+            return NoContent();
+        }
     }
 }

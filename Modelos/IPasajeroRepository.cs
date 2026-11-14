@@ -1,11 +1,13 @@
-using CheckInApi.Modelos;
+using System.Collections.Generic;
 
-public interface IPasajeroRepository
+namespace CheckInApi.Modelos
+{
+    public interface IPasajeRepository
     {
-        List<Pasajero> ObtenerTodos();
-        Pasajero? ObtenerPorId(int Id);
-        Pasajero? ObtenerPorDocumento(string documento);
-        bool Agregar(Pasajero pasajero);
-        bool Actualizar(Pasajero pasajero);
-        bool Eliminar(int id);
+        List<Pasaje> ObtenerTodos();
+        Pasaje? ObtenerPorId(int id);
+        void Agregar(Pasaje pasaje);
+        void Actualizar(Pasaje pasaje);
+        void Eliminar(int id);
     }
+}
