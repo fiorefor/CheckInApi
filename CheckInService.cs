@@ -44,7 +44,9 @@ public class CheckInService
             return (false, "Error al agregar el pasaje al pasajero.");
         }
 
-        pasajero.Pasaje = nuevo;
+        // AsignarPasaje vincula el pasaje con el DNI del pasajero
+        // (el setter de Pasaje ahora es privado).
+        pasajero.AsignarPasaje(nuevo);
         bool exito = repositorio.Actualizar(pasajero);
         if (!exito)
         {
