@@ -41,6 +41,30 @@ El cuerpo de `POST` y `PUT` es JSON con estos campos:
 
 El nombre no puede estar vacío. Para `PUT`, el documento debe corresponder a un pasajero existente.
 
+## Endpoints de pasajes
+
+Cada pasaje se administra dentro de su pasajero por `idPasajero`. El modelo de la app de Check-in incluye tipo de vuelo, tipo de tarifa y número de vuelo.
+
+| Método | Ruta | Descripción |
+| --- | --- | --- |
+| `GET` | `/api/Pasajes` | Lista los pasajes asignados. |
+| `GET` | `/api/Pasajes/{idPasajero}` | Obtiene el pasaje del pasajero. Devuelve `404` si el pasajero o el pasaje no existe. |
+| `POST` | `/api/Pasajes/{idPasajero}` | Asigna un pasaje. Devuelve `201` si se crea, `400` si los datos no son válidos y `404` si no existe el pasajero. |
+| `PUT` | `/api/Pasajes/{idPasajero}` | Actualiza los datos de un pasaje existente. Devuelve `400` si los datos no son válidos y `404` si no existe. |
+| `DELETE` | `/api/Pasajes/{idPasajero}` | Quita el pasaje del pasajero. Devuelve `404` si no existe. |
+
+El cuerpo de `POST` y `PUT` es:
+
+```json
+{
+  "tipoVuelo": "N",
+  "tipoTarifa": "P",
+  "nroVuelo": "AR1234"
+}
+```
+
+`tipoVuelo` admite `N` o `I`; `tipoTarifa` admite `P`, `B`, `PE` o `F`.
+
 ## Probar la API desde VS Code
 
 El archivo [CheckInApi.http](./CheckInApi.http) contiene ejemplos para probar los endpoints anteriores. Para ejecutarlos desde VS Code, instala la extensión [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client), inicia la API con el comando indicado en **Ejecutar** y selecciona **Send Request** sobre la petición que quieras probar. No es necesario usar `curl`.

@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using CheckInApi.Modelos;
-using CheckInApi.Modelos.Exceptions;
-using CheckInApi.Servicios;
+using CheckInApi.Services;
 
 namespace CheckInApi.Controllers
 {
@@ -24,44 +22,53 @@ namespace CheckInApi.Controllers
             return Ok(_pasajeService.ListarPasajes());
         }
 
-        [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        [HttpGet("{idPasajero}")]
+        public IActionResult GetById(int idPasajero)
         {
-            try
-            {
-                var pasaje = _pasajeService.ObtenerPasajePorId(id);
-                return Ok(pasaje);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(new { mensaje = ex.Message });
-            }
+            var pasaje = _pasajeService.ObtenerPasaje(idPasajero);
+            if (pasaje == null)
+                return NotFound(new { mensaje = $"No se encontró un pasaje para el pasajero con ID {idPasajero}." });
+
+            return Ok(pasaje);
         }
 
-        [HttpPost]
-        public IActionResult Create([FromBody] PasajeRequest request)
+        [HttpPost("{idPasajero:int}")]
+        public IActionResult Create(int idPasajero, [FromBody] PasajeRequest request)
         {
-            try
+            var resultado = _pasajeService.AgregarPasaje(idPasajero, request);
+            if (!resultado.exito)
             {
-                var creado = _pasajeService.EmitirPasaje(request);
-                return CreatedAtAction(nameof(GetById), new { id = creado.IdPasaje }, creado);
+                if (resultado.noEncontrado)
+                    return NotFound(new { mensaje = resultado.mensaje });
+
+                return BadRequest(new { mensaje = resultado.mensaje });
             }
-            catch (DatosInvalidosException ex)
-            {
-                return BadRequest(new { campo = ex.Campo, mensaje = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { mensaje = ex.Message });
-            }
+
+            var pasajeCreado = _pasajeService.ObtenerPasaje(idPasajero);
+            return CreatedAtAction(nameof(GetById), new { idPasajero }, pasajeCreado);
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        [HttpPut("{idPasajero:int}")]
+        public IActionResult Update(int idPasajero, [FromBody] PasajeRequest request)
         {
-            bool eliminado = _pasajeService.EliminarPasaje(id);
-            if (!eliminado)
-                return NotFound(new { mensaje = $"No existe el pasaje con ID {id}." });
+            var resultado = _pasajeService.ActualizarPasaje(idPasajero, request);
+            if (!resultado.exito)
+            {
+                if (resultado.noEncontrado)
+                    return NotFound(new { mensaje = resultado.mensaje });
+
+                return BadRequest(new { mensaje = resultado.mensaje });
+            }
+
+            return Ok(new { mensaje = resultado.mensaje });
+        }
+
+        [HttpDelete("{idPasajero:int}")]
+        public IActionResult Delete(int idPasajero)
+        {
+            var resultado = _pasajeService.EliminarPasaje(idPasajero);
+            if (!resultado.exito)
+                return NotFound(new { mensaje = resultado.mensaje });
 
             return NoContent();
         }

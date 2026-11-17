@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using CheckInApi.Modelos;
 
 public interface IPasajeroRepository
     {

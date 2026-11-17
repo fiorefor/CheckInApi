@@ -11,11 +11,11 @@ string path = Path.Combine(builder.Environment.ContentRootPath, "Data", "pasajer
 //Cuando en interfaz se pida un IpasajeroRepository se le entrega un PasajeroRepositoryArchivo (clase que guarda el .txt)
 //Si deseamos cambiar a bd solo cambiamos esta linea
 builder.Services.AddScoped<IPasajeroRepository>(provider => new PasajeroRepositoryArchivo(path));
-builder.Services.AddSingleton<IPasajeRepository, PasajeRepository>();
 
 //Capa de nogocios: recibe el repositorio por su construcción (inyecciónde dependencia)
 builder.Services.AddScoped<PasajeroService>();
 builder.Services.AddScoped<CheckInService>();
+builder.Services.AddScoped<CheckInApi.Services.PasajeService>();
 
 
 //OpenAI: genera descripción de la Api. La plantilla de Visual, la trae por defecto https://aka.ms/aspnet/openapi

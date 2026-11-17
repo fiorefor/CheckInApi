@@ -42,3 +42,41 @@ Content-Type: application/json
 # Eliminar un pasajero por documento
 DELETE {{CheckInApi_HostAddress}}/api/Pasajero/{{documento}}
 Accept: application/json
+
+###
+
+@idPasajero = 1
+
+# Consultar el pasaje de un pasajero
+GET {{CheckInApi_HostAddress}}/api/Pasajes/{{idPasajero}}
+Accept: application/json
+
+###
+
+# Asignar un pasaje
+POST {{CheckInApi_HostAddress}}/api/Pasajes/{{idPasajero}}
+Content-Type: application/json
+
+{
+  "tipoVuelo": "N",
+  "tipoTarifa": "P",
+  "nroVuelo": "AR1234"
+}
+
+###
+
+# Actualizar un pasaje existente
+PUT {{CheckInApi_HostAddress}}/api/Pasajes/{{idPasajero}}
+Content-Type: application/json
+
+{
+  "tipoVuelo": "I",
+  "tipoTarifa": "PE",
+  "nroVuelo": "AR5678"
+}
+
+###
+
+# Eliminar el pasaje de un pasajero
+DELETE {{CheckInApi_HostAddress}}/api/Pasajes/{{idPasajero}}
+Accept: application/json
