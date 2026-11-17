@@ -57,8 +57,34 @@ namespace CheckInApi.Modelos
         }
 
         public Pasaje(string tipoVuelo, string tipoTarifa, string nroVuelo)
-            : this(0, 1m, 1m, DateTime.Now, "0", "1", tipoVuelo, tipoTarifa, nroVuelo)
+            : this(0, CalcularPrecioBase(tipoVuelo), CalcularPrecioFinal(tipoVuelo, tipoTarifa), DateTime.Now, "0", "1", tipoVuelo, tipoTarifa, nroVuelo)
         {
+        }
+
+        public static decimal CalcularPrecioBase(string tipoVuelo)
+        {
+            string vueloNorm = tipoVuelo?.Trim().ToUpperInvariant() ?? string.Empty;
+            return vueloNorm switch
+            {
+                "N" => 200000m,
+                "I" => 500000m,
+                _ => throw new DatosInvalidosException("Tipo de Vuelo", "El tipo de vuelo debe ser 'Nacional' o 'Internacional'.")
+            };
+        }
+
+        public static decimal CalcularPrecioFinal(string tipoVuelo, string tipoTarifa)
+        {
+            string tarifaNorm = tipoTarifa?.Trim().ToUpperInvariant() ?? string.Empty;
+            decimal adicionalTarifa = tarifaNorm switch
+            {
+                "F" => 250000m,
+                "PE" => 300000m,
+                "B" => 350000m,
+                "P" => 400000m,
+                _ => throw new DatosInvalidosException("Tipo de Tarifa", "El tipo de tarifa debe ser 'P' (Primera/Premium), 'B' (Business), 'PE' (Premium Economy) o 'F' (Economy).")
+            };
+
+            return CalcularPrecioBase(tipoVuelo) + adicionalTarifa;
         }
 
         public int IdPasaje

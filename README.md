@@ -63,7 +63,18 @@ El cuerpo de `POST` y `PUT` es:
 }
 ```
 
-`tipoVuelo` admite `N` o `I`; `tipoTarifa` admite `P`, `B`, `PE` o `F`.
+`tipoVuelo` admite `N` o `I`; `tipoTarifa` admite `P`, `B`, `PE` o `F`. Los precios se calculan automáticamente en pesos argentinos (ARS):
+
+| Concepto | Importe |
+| --- | ---: |
+| Precio base nacional (`N`) | $200.000 |
+| Precio base internacional (`I`) | $500.000 |
+| Adicional Economy (`F`) | $250.000 |
+| Adicional Premium Economy (`PE`) | $300.000 |
+| Adicional Business (`B`) | $350.000 |
+| Adicional Primera/Premium (`P`) | $400.000 |
+
+`precioFinal` es la suma del precio base del vuelo más el adicional de la tarifa. Por ejemplo, vuelo nacional Economy: `precioBase` $200.000 y `precioFinal` $450.000. El cliente no debe enviar los importes en el JSON; el servidor los determina a partir de `tipoVuelo` y `tipoTarifa`.
 
 ## Probar la API desde VS Code
 

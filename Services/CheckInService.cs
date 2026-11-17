@@ -37,6 +37,7 @@ public class CheckInService
                 datos.TipoTarifa ?? string.Empty,
                 datos.NroVuelo ?? string.Empty
             );
+            nuevo.IdPasaje = pasajero.Id;
         }
         catch (DatosInvalidosException)
         {

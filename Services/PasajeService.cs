@@ -44,6 +44,7 @@ namespace CheckInApi.Services
                     datos.TipoTarifa ?? string.Empty,
                     datos.NroVuelo ?? string.Empty
                 );
+                nuevo.IdPasaje = pasajero.Id;
 
                 pasajero.AsignarPasaje(nuevo);
 
@@ -67,15 +68,17 @@ namespace CheckInApi.Services
             try
             {
                 Pasaje actual = pasajero.Pasaje;
+                string tipoVuelo = datos.TipoVuelo ?? string.Empty;
+                string tipoTarifa = datos.TipoTarifa ?? string.Empty;
                 Pasaje actualizado = new Pasaje(
-                    actual.IdPasaje,
-                    actual.PrecioBase,
-                    actual.PrecioFinal,
+                    actual.IdPasaje == 0 ? pasajero.Id : actual.IdPasaje,
+                    Pasaje.CalcularPrecioBase(tipoVuelo),
+                    Pasaje.CalcularPrecioFinal(tipoVuelo, tipoTarifa),
                     actual.FechaEmision,
                     pasajero.Documento,
                     actual.Asiento,
-                    datos.TipoVuelo ?? string.Empty,
-                    datos.TipoTarifa ?? string.Empty,
+                    tipoVuelo,
+                    tipoTarifa,
                     datos.NroVuelo ?? string.Empty
                 );
 
