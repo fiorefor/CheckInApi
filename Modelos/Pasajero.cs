@@ -43,8 +43,6 @@ namespace CheckInApi.Modelos
             int id = 0)
         {
             // Validaciones de campos OBLIGATORIOS.
-            // Si algo falla lanzamos DatosInvalidosException (ya existía en el
-            // proyecto) indicando QUÉ campo falló y POR QUÉ.
             if (string.IsNullOrWhiteSpace(documento))
             {
                 throw new DatosInvalidosException("Documento", "El DNI no puede estar vacío.");
@@ -57,11 +55,6 @@ namespace CheckInApi.Modelos
             {
                 throw new DatosInvalidosException("Apellido", "El apellido no puede estar vacío.");
             }
-
-            // Email y Teléfono NO se exigen acá porque los registros viejos
-            // del archivo pasajeros.txt no los tienen; si los exigiéramos,
-            // al leer el archivo explotaría la carga de esos pasajeros.
-            // El servicio sí los exige al dar de alta pasajeros nuevos.
 
             Id = id;
             // Trim() quita espacios al principio y al final ("  Ana " -> "Ana").
@@ -212,25 +205,22 @@ namespace CheckInApi.Modelos
         // Cada pasajero se guarda en UNA línea con los campos separados por "|".
         // Formato (posición -> campo):
         //    0 Id | 1 Nombre | 2 Apellido | 3 DNI | 4 PasajeroFrecuente
-        //    5 TipoVuelo | 6 TipoTarifa | 7 NroVuelo          <- pasaje (formato viejo)
-        //    8 Email | 9 Teléfono
-        //   10 IdPasaje | 11 PrecioBase | 12 PrecioFinal
-        //   13 FechaEmision | 14 Asiento                      <- pasaje (campos nuevos)
-        //
-        // Si NO tiene pasaje, las posiciones 5-7 y 10-14 quedan vacías.
+        //    5 Email | 6 Teléfono
+        //    7 IdPasaje | 8 TipoVuelo | 9 TipoTarifa | 10 NroVuelo  |           <-- campos del pasaje (si tiene)
+        //   11 PrecioBase | 12 PrecioFinal
+        //   13 FechaEmision | 14 Asiento                      
+        // Si NO tiene pasaje, las posiciones 7-14 quedan vacías.
         // El DNI del pasaje NO se guarda: siempre es el mismo que el del pasajero (pos. 3).
-        //
-        // IMPORTANTE: los campos nuevos se agregan siempre AL FINAL para que las
-        // líneas viejas (8 o 10 campos) se sigan pudiendo leer.
+
         public override string ToString()
         {
-            // Datos propios del pasajero (posiciones 0 a 4)
-            string linea = $"{Id}|{Nombre}|{Apellido}|{Documento}|{PasajeroFrecuente}";
+            // Datos propios del pasajero (posiciones 0 a 6)
+            string linea = $"{Id}|{Nombre}|{Apellido}|{Documento}|{PasajeroFrecuente}|{Email}|{Telefono}";
 
             if (Pasaje == null)
             {
-                // Sin pasaje: 3 campos vacíos, email/teléfono y 5 campos vacíos.
-                linea += $"|||" + $"|{Email}|{Telefono}" + "|||||";
+                // Sin pasaje: 8 campos vacíos.
+                linea += $"||||||||";
             }
             else
             {
@@ -239,9 +229,8 @@ namespace CheckInApi.Modelos
                 // cualquier máquina.
                 // Formato "o" de fecha (ISO 8601, ej: 2026-11-13T10:30:00.0000000) se puede
                 // volver a leer exactamente igual con DateTime.Parse.
-                linea += $"|{Pasaje.TipoVuelo}|{Pasaje.TipoTarifa}|{Pasaje.NroVuelo}"
-                       + $"|{Email}|{Telefono}"
-                       + $"|{Pasaje.IdPasaje}"
+                linea += $"|{Pasaje.IdPasaje}" 
+                       + $"|{Pasaje.TipoVuelo}|{Pasaje.TipoTarifa}|{Pasaje.NroVuelo}"
                        + $"|{Pasaje.PrecioBase.ToString(CultureInfo.InvariantCulture)}"
                        + $"|{Pasaje.PrecioFinal.ToString(CultureInfo.InvariantCulture)}"
                        + $"|{Pasaje.FechaEmision.ToString("o", CultureInfo.InvariantCulture)}"
@@ -257,17 +246,14 @@ namespace CheckInApi.Modelos
             string[] partes = linea.Split('|');
             int id = int.Parse(partes[0]);
 
-            // Si la línea es vieja (menos de 10 campos), Email/Teléfono quedan vacíos.
-            string email = Campo(partes, 8);
-            string telefono = Campo(partes, 9);
+            Pasajero pasajero = new Pasajero(Campo(partes, 1), Campo(partes, 2), Campo(partes, 3),
+                Campo(partes, 5), Campo(partes, 6), Campo(partes, 4), id);
 
-            Pasajero pasajero = new Pasajero(partes[1], partes[2], partes[3], email, telefono, partes[4], id);
-
-            // ---- Pasaje OPCIONAL ----
+            // ---- Pasaje OPCIONAL (posiciones 7 a 14) ----
             // Solo existe si tipo de vuelo, tarifa y número de vuelo tienen valor.
-            string tipoVuelo = Campo(partes, 5);
-            string tipoTarifa = Campo(partes, 6);
-            string nroVuelo = Campo(partes, 7);
+            string tipoVuelo = Campo(partes, 8);
+            string tipoTarifa = Campo(partes, 9);
+            string nroVuelo = Campo(partes, 10);
             bool tienePasaje = tipoVuelo != "" && tipoTarifa != "" && nroVuelo != "";
 
             if (!tienePasaje)
@@ -275,27 +261,16 @@ namespace CheckInApi.Modelos
                 return pasajero;   // pasajero sin pasaje: Pasaje queda en null
             }
 
-            Pasaje pasaje;
-            if (Campo(partes, 14) != "")
-            {
-                // Línea con formato NUEVO: tenemos todos los datos del pasaje.
-                pasaje = new Pasaje(
-                    int.Parse(Campo(partes, 10)),
-                    decimal.Parse(Campo(partes, 11), CultureInfo.InvariantCulture),
-                    decimal.Parse(Campo(partes, 12), CultureInfo.InvariantCulture),
-                    DateTime.Parse(Campo(partes, 13), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind),
-                    pasajero.Documento,   // el DNI del pasaje es el del pasajero
-                    Campo(partes, 14),
-                    tipoVuelo,
-                    tipoTarifa,
-                    nroVuelo);
-            }
-            else
-            {
-                // Línea con formato VIEJO (solo 3 datos del pasaje):
-                // usamos el constructor corto, que completa el resto con valores por defecto.
-                pasaje = new Pasaje(tipoVuelo, tipoTarifa, nroVuelo);
-            }
+            Pasaje pasaje = new Pasaje(
+                int.Parse(Campo(partes, 7)),
+                decimal.Parse(Campo(partes, 11), CultureInfo.InvariantCulture),
+                decimal.Parse(Campo(partes, 12), CultureInfo.InvariantCulture),
+                DateTime.Parse(Campo(partes, 13), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind),
+                pasajero.Documento,   // el DNI del pasaje es el del pasajero
+                Campo(partes, 14),
+                tipoVuelo,
+                tipoTarifa,
+                nroVuelo);
 
             // AsignarPasaje vincula el DNI y valida que corresponda a este pasajero.
             pasajero.AsignarPasaje(pasaje);
@@ -306,7 +281,16 @@ namespace CheckInApi.Modelos
         // (líneas viejas más cortas). Evita IndexOutOfRangeException.
         private static string Campo(string[] partes, int posicion)
         {
-            return partes.Length > posicion ? partes[posicion].Trim() : string.Empty;
+            if (partes.Length > posicion)
+            {
+                // La línea tiene ese campo: lo devolvemos sin espacios.
+                return partes[posicion].Trim();
+            }
+            else
+            {
+                // La línea es más corta y no llega a esa posición.
+                return string.Empty;
+            }
         }
     }
 }

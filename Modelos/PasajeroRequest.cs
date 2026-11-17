@@ -6,7 +6,7 @@
 // {
 //   "nombre": "Ada", "apellido": "Lovelace", "documento": "12.345.678",
 //   "email": "ada@mail.com", "telefono": "+54 11 5555-1234",
-//   "pasajeroFrecuente": "true"
+//   "pasajeroFrecuente": "1234567890"
 // }
 public class PasajeroRequest
 {

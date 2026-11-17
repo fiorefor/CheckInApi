@@ -9,3 +9,4 @@ public interface IPasajeroRepository
         bool Actualizar(Pasajero pasajero);
         bool Eliminar(int id);
     }
+    
