@@ -1,5 +1,4 @@
 ﻿using System;
-using System;
 using CheckInApi.Modelos.Exceptions;
 
 namespace CheckInApi.Modelos
@@ -44,7 +43,7 @@ namespace CheckInApi.Modelos
             }
             if (precioBase <= 0)
             {
-                throw new DatosInvalidosException("Precio Base", "El precio base no puede ser mayor a cero.");
+                throw new DatosInvalidosException("Precio Base", "El precio base debe ser mayor a cero.");
             }
             _idPasaje = idPasaje;
             _precioBase = precioBase;

@@ -1,37 +1,76 @@
-using CheckInApi.Modelos;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using CheckInApi.Modelos;
+using CheckInApi.Services;
 
-[ApiController]
-[Route("api/[controller]")]
-
-public class PasajeController : ControllerBase
+namespace CheckInApi.Controllers
 {
-    private readonly CheckInService servicio;
-
-    public PasajeController(CheckInService servicio)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class PasajesController : ControllerBase
     {
-        this.servicio = servicio;
-    }
+        private readonly PasajeService _pasajeService;
 
-    [HttpGet("{idPasajero:int}")]
-    public ActionResult<Pasaje> ObtenerPasaje(int idPasajero)
-    {
-        var pasaje = servicio.ObtenerPasaje(idPasajero);
-        if (pasaje == null)
+        public PasajesController(PasajeService pasajeService)
         {
-            return NotFound($"No se encontró un pasaje para el pasajero con ID: {idPasajero}");
+            _pasajeService = pasajeService;
         }
-        return Ok(pasaje);
-    }
 
-    [HttpPost("{idPasajero:int}")]
-    public ActionResult AgregarPasaje(int idPasajero, [FromBody] PasajeRequest datos)
-    {
-        var (exito, mensaje) = servicio.AgregarPasaje(idPasajero, datos);
-        if (!exito)
+        [HttpGet]
+        public IActionResult GetAll()
         {
-            return BadRequest(mensaje);
+            return Ok(_pasajeService.ListarPasajes());
         }
-        return Ok(mensaje);
+
+        [HttpGet("{idPasajero}")]
+        public IActionResult GetById(int idPasajero)
+        {
+            var pasaje = _pasajeService.ObtenerPasaje(idPasajero);
+            if (pasaje == null)
+                return NotFound(new { mensaje = $"No se encontró un pasaje para el pasajero con ID {idPasajero}." });
+
+            return Ok(pasaje);
+        }
+
+        [HttpPost("{idPasajero:int}")]
+        public IActionResult Create(int idPasajero, [FromBody] PasajeRequest request)
+        {
+            var resultado = _pasajeService.AgregarPasaje(idPasajero, request);
+            if (!resultado.exito)
+            {
+                if (resultado.noEncontrado)
+                    return NotFound(new { mensaje = resultado.mensaje });
+
+                return BadRequest(new { mensaje = resultado.mensaje });
+            }
+
+            var pasajeCreado = _pasajeService.ObtenerPasaje(idPasajero);
+            return CreatedAtAction(nameof(GetById), new { idPasajero }, pasajeCreado);
+        }
+
+        [HttpPut("{idPasajero:int}")]
+        public IActionResult Update(int idPasajero, [FromBody] PasajeRequest request)
+        {
+            var resultado = _pasajeService.ActualizarPasaje(idPasajero, request);
+            if (!resultado.exito)
+            {
+                if (resultado.noEncontrado)
+                    return NotFound(new { mensaje = resultado.mensaje });
+
+                return BadRequest(new { mensaje = resultado.mensaje });
+            }
+
+            return Ok(new { mensaje = resultado.mensaje });
+        }
+
+        [HttpDelete("{idPasajero:int}")]
+        public IActionResult Delete(int idPasajero)
+        {
+            var resultado = _pasajeService.EliminarPasaje(idPasajero);
+            if (!resultado.exito)
+                return NotFound(new { mensaje = resultado.mensaje });
+
+            return NoContent();
+        }
     }
 }

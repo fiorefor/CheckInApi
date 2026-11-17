@@ -15,6 +15,7 @@ builder.Services.AddScoped<IPasajeroRepository>(provider => new PasajeroReposito
 //Capa de nogocios: recibe el repositorio por su construcción (inyecciónde dependencia)
 builder.Services.AddScoped<PasajeroService>();
 builder.Services.AddScoped<CheckInService>();
+builder.Services.AddScoped<CheckInApi.Services.PasajeService>();
 
 
 //OpenAI: genera descripción de la Api. La plantilla de Visual, la trae por defecto https://aka.ms/aspnet/openapi
