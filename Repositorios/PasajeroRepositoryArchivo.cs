@@ -1,6 +1,8 @@
 using CheckInApi.Modelos;
 using CheckInApi.Modelos.Exceptions;
 
+namespace CheckInApi.Repositorios
+{
 //CAPA DATOS/PERSISTENCIA 
 
 //Peticion Controller-PasajeroService-IPasajeroRepository-Esta seccion-txt
@@ -194,6 +196,7 @@ public class PasajeroRepositoryArchivo : IPasajeroRepository
             }
         }
     }
+}
 }
     
 

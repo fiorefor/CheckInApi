@@ -1,3 +1,5 @@
+using CheckInApi.Repositorios;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Registro de servicios en el contenedor de dependencias

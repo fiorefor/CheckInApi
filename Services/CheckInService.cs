@@ -1,5 +1,6 @@
 using CheckInApi.Modelos;
 using CheckInApi.Modelos.Exceptions;
+using CheckInApi.Repositorios;
 
 public class CheckInService
 {

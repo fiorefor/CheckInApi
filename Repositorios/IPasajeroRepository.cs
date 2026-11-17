@@ -1,6 +1,8 @@
 using CheckInApi.Modelos;
 
-public interface IPasajeroRepository
+namespace CheckInApi.Repositorios
+{
+    public interface IPasajeroRepository
     {
         List<Pasajero> ObtenerTodos();
         Pasajero? ObtenerPorId(int Id);
@@ -9,4 +11,5 @@ public interface IPasajeroRepository
         bool Actualizar(Pasajero pasajero);
         bool Eliminar(int id);
     }
+}
     
