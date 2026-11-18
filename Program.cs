@@ -43,6 +43,7 @@ app.UseExceptionHandler(error => error.Run(async context =>
         ArchivoException archivo => (StatusCodes.Status500InternalServerError, archivo.Message),
         DatosException datos => (StatusCodes.Status400BadRequest, datos.Message),
         EquipajeException equipaje => (StatusCodes.Status400BadRequest, equipaje.Message),
+        PasajeroException pasajero => (StatusCodes.Status400BadRequest, pasajero.Message),
         UnauthorizedAccessException => (StatusCodes.Status500InternalServerError, "No hay permisos para acceder al archivo de datos."),
         IOException => (StatusCodes.Status500InternalServerError, "No se pudo leer o escribir el archivo de datos."),
         _ => (StatusCodes.Status500InternalServerError, "Ocurrió un error inesperado. Intente nuevamente.")
