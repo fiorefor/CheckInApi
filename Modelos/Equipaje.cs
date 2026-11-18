@@ -6,16 +6,10 @@ namespace CheckInApi.Modelos
 {
     public class Equipaje
     {
-        private double _pesoKg;
-        private string _id;
-
-        public Equipaje(double pesoKg, string id)
-        {
-            _pesoKg = pesoKg;
-            _id = id;
-        }
-
-        public double PesoKg { get { return _pesoKg; } }
-
+        public string CodigoEtiqueta { get; set; }
+        public string PasajeroId { get; set; }
+        public double PesoKg { get; set; }
+        public string TipoEquipaje { get; set; }
+        public decimal TarifaExceso { get; set; }
     }
 }

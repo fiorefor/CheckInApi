@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using CheckInApi.Modelos;
 using CheckInApi.Modelos.Exceptions;
+using CheckInApi.Repositorios;
 
 // =========================================================================
 // CAPA DE SERVICIO (lógica de negocio) para Pasajeros
