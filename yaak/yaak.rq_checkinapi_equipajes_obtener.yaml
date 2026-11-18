@@ -1,0 +1,20 @@
+type: http_request
+model: http_request
+id: rq_checkinapi_equipajes_obtener
+workspaceId: wk_checkinapi
+folderId: fl_checkinapi_equipajes
+createdAt: "2026-11-17T12:00:00.000000000"
+updatedAt: "2026-11-17T12:00:00.000000000"
+name: Obtener equipaje por código
+method: GET
+url: "${[ base_url ]}/api/Equipaje/${[ pasajero_id ]}/${[ codigo_etiqueta ]}"
+sortPriority: 3
+headers:
+  - name: Accept
+    value: application/json
+    enabled: true
+description: |-
+  `GET /api/Equipaje/{idPasajero}/{codigoEtiqueta}`
+
+  Busca un equipaje por su código de etiqueta dentro del pasajero indicado,
+  sin distinguir mayúsculas. Devuelve `404` si el pasajero o el equipaje no existen.

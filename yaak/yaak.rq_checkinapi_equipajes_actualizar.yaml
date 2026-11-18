@@ -1,0 +1,57 @@
+type: http_request
+model: http_request
+id: rq_checkinapi_equipajes_actualizar
+createdAt: 2026-11-17T12:00:00
+updatedAt: 2026-11-18T01:58:13.369112300
+workspaceId: wk_checkinapi
+folderId: fl_checkinapi_equipajes
+authentication: {}
+authenticationType: null
+body:
+  text: |-
+    {
+      "codigoEtiqueta": "${[ codigo_etiqueta ]}",
+      "tipoEquipaje": "Bodega",
+      "pesoKg": 50
+    }
+bodyType: application/json
+description: |-
+  `PUT /api/Equipaje/{idPasajero}/{codigoEtiqueta}`
+
+  Actualiza el peso y el tipo del equipaje, y recalcula `tarifaExceso`.
+  El código de etiqueta viaja en la ruta y no se modifica.
+
+  Devuelve `200` con `{ "mensaje": ... }`, `404` si el pasajero o el
+  equipaje no existen, o `400` si el peso no es mayor a `0`.
+headers:
+- enabled: true
+  name: Content-Type
+  value: application/json
+  id: null
+- enabled: true
+  name: Accept
+  value: application/json
+  id: null
+method: PUT
+name: Actualizar equipaje
+sortPriority: 5.0
+url: ${[ base_url ]}/api/Equipaje/${[ pasajero_id ]}/${[ codigo_etiqueta ]}
+urlParameters: []
+settingSendCookies:
+  enabled: false
+  value: true
+settingStoreCookies:
+  enabled: false
+  value: true
+settingValidateCertificates:
+  enabled: false
+  value: true
+settingFollowRedirects:
+  enabled: false
+  value: true
+settingRequestTimeout:
+  enabled: false
+  value: 0
+settingHttpVersion:
+  enabled: false
+  value: auto

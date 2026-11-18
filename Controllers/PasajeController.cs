@@ -67,10 +67,13 @@ namespace CheckInApi.Controllers
         public IActionResult Delete(int idPasajero)
         {
             var resultado = _pasajeService.EliminarPasaje(idPasajero);
-            if (!resultado.exito)
+            if (resultado.noEncontrado)
                 return NotFound(new { mensaje = resultado.mensaje });
 
-            return NoContent();
+            if (!resultado.exito)
+                return BadRequest(new { mensaje = resultado.mensaje });
+
+            return Ok(new { mensaje = resultado.mensaje });
         }
     }
 }

@@ -1,19 +1,43 @@
 type: http_request
 model: http_request
 id: rq_checkinapi_pasajes_listar
+createdAt: 2026-11-17T12:00:00
+updatedAt: 2026-11-18T01:53:33.883513500
 workspaceId: wk_checkinapi
 folderId: fl_checkinapi_pasajes
-createdAt: "2026-11-17T12:00:00.000000000"
-updatedAt: "2026-11-17T12:00:00.000000000"
-name: Listar pasajes
-method: GET
-url: "${[ base_url ]}/api/Pasajes"
-sortPriority: 1
-headers:
-  - name: Accept
-    value: application/json
-    enabled: true
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
 description: |-
   `GET /api/Pasajes`
 
   Devuelve únicamente los pasajes asignados (los pasajeros sin pasaje no aparecen).
+headers:
+- enabled: true
+  name: Accept
+  value: application/json
+  id: null
+method: GET
+name: Listar pasajes
+sortPriority: 1.0
+url: ${[ base_url ]}/api/Pasajes
+urlParameters: []
+settingSendCookies:
+  enabled: false
+  value: true
+settingStoreCookies:
+  enabled: false
+  value: true
+settingValidateCertificates:
+  enabled: false
+  value: true
+settingFollowRedirects:
+  enabled: false
+  value: true
+settingRequestTimeout:
+  enabled: false
+  value: 0
+settingHttpVersion:
+  enabled: false
+  value: auto

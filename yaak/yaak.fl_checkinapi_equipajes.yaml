@@ -1,0 +1,28 @@
+type: folder
+model: folder
+id: fl_checkinapi_equipajes
+workspaceId: wk_checkinapi
+createdAt: "2026-11-17T12:00:00.000000000"
+updatedAt: "2026-11-17T12:00:00.000000000"
+name: Equipajes
+folderId: null
+description: |-
+  Endpoints de `EquipajeController` (ruta base `/api/Equipaje`).
+
+  El equipaje pertenece a un pasajero y se identifica por su `codigoEtiqueta`,
+  que es obligatorio y no se puede repetir para el mismo pasajero.
+
+  Antes de registrar un equipaje, el pasajero debe tener un pasaje:
+  ejecutá primero **Pasajes → Asignar pasaje** (`POST /api/Pasajes/{idPasajero}`).
+
+  Reglas de peso: `15 kg` para vuelos nacionales (`N`) y `23 kg` para
+  internacionales (`I`). Cada kilo excedido cuesta `$2.500`.
+  `tarifaExceso` siempre la calcula el servidor.
+
+  Los equipajes se guardan dentro de la línea del pasajero en
+  `Data/pasajeros.txt`, así que sobreviven al reinicio de la API y se
+  eliminan junto con el pasajero.
+authentication: {}
+authenticationType: null
+headers: []
+sortPriority: 3

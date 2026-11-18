@@ -11,3 +11,4 @@ description: |-
 
   `tipoVuelo`: `N` (nacional) o `I` (internacional).
   `tipoTarifa`: `P`, `B`, `PE` o `F`.
+sortPriority: 2

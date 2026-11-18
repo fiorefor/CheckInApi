@@ -6,8 +6,6 @@ using CheckInApi.Repositorios;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var builder = WebApplication.CreateBuilder(args);
-
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(opciones =>
     {
@@ -25,6 +23,7 @@ builder.Services.AddScoped<IPasajeroRepository>(provider => new PasajeroReposito
 builder.Services.AddScoped<PasajeroService>();
 builder.Services.AddScoped<CheckInService>();
 builder.Services.AddScoped<CheckInApi.Services.PasajeService>();
+builder.Services.AddScoped<EquipajeService>();
 
 builder.Services.AddOpenApi();
 

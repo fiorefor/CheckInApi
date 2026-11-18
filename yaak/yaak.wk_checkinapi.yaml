@@ -19,6 +19,10 @@ description: |-
   Carpetas:
   - **Pasajeros**: `/api/Pasajero` (listar, obtener, crear, actualizar, eliminar)
   - **Pasajes**: `/api/Pasajes` (listar, obtener, asignar, actualizar, eliminar)
+  - **Equipajes**: `/api/Equipaje` (listar, obtener, registrar, actualizar, eliminar)
+
+  Los equipajes se guardan dentro de la línea del pasajero en `Data/pasajeros.txt`:
+  sobreviven al reinicio de la API y se eliminan junto con el pasajero.
 authentication: {}
 authenticationType: null
 headers: []

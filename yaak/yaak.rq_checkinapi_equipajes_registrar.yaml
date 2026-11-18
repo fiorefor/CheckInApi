@@ -1,0 +1,58 @@
+type: http_request
+model: http_request
+id: rq_checkinapi_equipajes_registrar
+createdAt: 2026-11-17T12:00:00
+updatedAt: 2026-11-18T02:19:58.727322600
+workspaceId: wk_checkinapi
+folderId: fl_checkinapi_equipajes
+authentication: {}
+authenticationType: null
+body:
+  text: |-
+    {
+      "codigoEtiqueta": "${[ codigo_etiqueta ]}",
+      "tipoEquipaje": "Bodega",
+      "pesoKg": 30
+    }
+bodyType: application/json
+description: |-
+  `POST /api/Equipaje/{idPasajero}`
+
+  Registra un equipaje para el pasajero y devuelve `201 Created` con la
+  `tarifaExceso` calculada. Un equipaje de `20 kg` en un vuelo nacional
+  (`15 kg` permitidos) genera `$12.500` de exceso.
+
+  Devuelve `400` si el pasajero no existe, no tiene pasaje, el peso no es
+  mayor a `0`, el código está vacío o ya existe para ese pasajero.
+headers:
+- enabled: true
+  name: Content-Type
+  value: application/json
+  id: null
+- enabled: true
+  name: Accept
+  value: application/json
+  id: null
+method: POST
+name: Registrar equipaje
+sortPriority: 4.0
+url: ${[ base_url ]}/api/Equipaje/${[ pasajero_id ]}
+urlParameters: []
+settingSendCookies:
+  enabled: false
+  value: true
+settingStoreCookies:
+  enabled: false
+  value: true
+settingValidateCertificates:
+  enabled: false
+  value: true
+settingFollowRedirects:
+  enabled: false
+  value: true
+settingRequestTimeout:
+  enabled: false
+  value: 0
+settingHttpVersion:
+  enabled: false
+  value: auto

@@ -1,32 +1,23 @@
 type: http_request
 model: http_request
 id: rq_checkinapi_pasajeros_crear
+createdAt: 2026-11-17T12:00:00
+updatedAt: 2026-11-18T02:32:32.261259
 workspaceId: wk_checkinapi
 folderId: fl_checkinapi_pasajeros
-createdAt: "2026-11-17T12:00:00.000000000"
-updatedAt: "2026-11-17T12:00:00.000000000"
-name: Crear pasajero
-method: POST
-url: "${[ base_url ]}/api/Pasajero"
-sortPriority: 3
-bodyType: application/json
+authentication: {}
+authenticationType: null
 body:
   text: |-
     {
-      "nombre": "Ada",
-      "apellido": "Lovelace",
+      "nombre": "Juan",
+      "apellido": "Pampa",
       "documento": "${[ documento ]}",
-      "email": "ada@mail.com",
-      "telefono": "+54 11 5555-1234",
-      "pasajeroFrecuente": "1234567890"
+      "email": "juanpam@mail.com",
+      "telefono": "+54 08 5252-1234",
+      "pasajeroFrecuente": "8791567890"
     }
-headers:
-  - name: Content-Type
-    value: application/json
-    enabled: true
-  - name: Accept
-    value: application/json
-    enabled: true
+bodyType: application/json
 description: |-
   `POST /api/Pasajero`
 
@@ -34,3 +25,35 @@ description: |-
 
   Reglas: `documento` de 7 u 8 dígitos (sin puntos o con puntos) y `email` obligatorio con formato válido.
   Devuelve `400 Bad Request` si hay datos inválidos o el DNI ya existe.
+headers:
+- enabled: true
+  name: Content-Type
+  value: application/json
+  id: null
+- enabled: true
+  name: Accept
+  value: application/json
+  id: null
+method: POST
+name: Crear pasajero
+sortPriority: 3.0
+url: ${[ base_url ]}/api/Pasajero
+urlParameters: []
+settingSendCookies:
+  enabled: false
+  value: true
+settingStoreCookies:
+  enabled: false
+  value: true
+settingValidateCertificates:
+  enabled: false
+  value: true
+settingFollowRedirects:
+  enabled: false
+  value: true
+settingRequestTimeout:
+  enabled: false
+  value: 0
+settingHttpVersion:
+  enabled: false
+  value: auto

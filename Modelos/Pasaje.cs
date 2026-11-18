@@ -56,8 +56,8 @@ namespace CheckInApi.Modelos
             _nroVuelo = nroVuelo.Trim().ToUpper();
         }
 
-        public Pasaje(string tipoVuelo, string tipoTarifa, string nroVuelo)
-            : this(0, CalcularPrecioBase(tipoVuelo), CalcularPrecioFinal(tipoVuelo, tipoTarifa), DateTime.Now, "0", "1", tipoVuelo, tipoTarifa, nroVuelo)
+        public Pasaje(string tipoVuelo, string tipoTarifa, string nroVuelo, string asiento = "1")
+            : this(0, CalcularPrecioBase(tipoVuelo), CalcularPrecioFinal(tipoVuelo, tipoTarifa), DateTime.Now, "0", asiento, tipoVuelo, tipoTarifa, nroVuelo)
         {
         }
 

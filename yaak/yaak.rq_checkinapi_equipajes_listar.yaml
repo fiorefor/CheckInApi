@@ -1,0 +1,19 @@
+type: http_request
+model: http_request
+id: rq_checkinapi_equipajes_listar
+workspaceId: wk_checkinapi
+folderId: fl_checkinapi_equipajes
+createdAt: "2026-11-17T12:00:00.000000000"
+updatedAt: "2026-11-17T12:00:00.000000000"
+name: Listar equipajes
+method: GET
+url: "${[ base_url ]}/api/Equipaje"
+sortPriority: 1
+headers:
+  - name: Accept
+    value: application/json
+    enabled: true
+description: |-
+  `GET /api/Equipaje`
+
+  Devuelve todos los equipajes registrados, de todos los pasajeros.

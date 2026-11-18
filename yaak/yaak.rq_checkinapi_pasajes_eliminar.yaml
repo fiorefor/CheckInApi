@@ -16,4 +16,6 @@ headers:
 description: |-
   `DELETE /api/Pasajes/{idPasajero}`
 
-  Quita el pasaje del pasajero (el pasajero se conserva). Devuelve `204 No Content`.
+  Quita el pasaje del pasajero (el pasajero se conserva). Devuelve `200`
+  con `{ "mensaje": "Pasaje eliminado correctamente." }`, o `404` si el
+  pasajero no existe o no tiene pasaje.

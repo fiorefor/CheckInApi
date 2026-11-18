@@ -11,8 +11,6 @@ public class CheckInService
         this.repositorio = repositorio;
     }
 
-    // Pasaje
-
     public Pasaje? ObtenerPasaje(int idPasajero)
     {
         Pasajero? pasajero = repositorio.ObtenerPorId(idPasajero);
@@ -22,7 +20,7 @@ public class CheckInService
         }
         return pasajero.Pasaje;
     }
-    
+
     public (bool exito, string mensaje) AgregarPasaje(int idPasajero, PasajeRequest datos)
     {
         Pasajero? pasajero = repositorio.ObtenerPorId(idPasajero);
@@ -42,12 +40,9 @@ public class CheckInService
         }
         catch (DatosInvalidosException)
         {
-            // Manejar la excepción según sea necesario, por ejemplo, registrarla o devolver un mensaje de error.
             return (false, "Error al agregar el pasaje al pasajero.");
         }
 
-        // AsignarPasaje vincula el pasaje con el DNI del pasajero
-        // (el setter de Pasaje ahora es privado).
         pasajero.AsignarPasaje(nuevo);
         bool exito = repositorio.Actualizar(pasajero);
         if (!exito)

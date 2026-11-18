@@ -1,33 +1,25 @@
 type: http_request
 model: http_request
 id: rq_checkinapi_pasajes_asignar
+createdAt: 2026-11-17T12:00:00
+updatedAt: 2026-11-18T02:14:37.877115800
 workspaceId: wk_checkinapi
 folderId: fl_checkinapi_pasajes
-createdAt: "2026-11-17T12:00:00.000000000"
-updatedAt: "2026-11-17T12:00:00.000000000"
-name: Asignar pasaje
-method: POST
-url: "${[ base_url ]}/api/Pasajes/${[ pasajero_id ]}"
-sortPriority: 3
-bodyType: application/json
+authentication: {}
+authenticationType: null
 body:
   text: |-
     {
-      "tipoVuelo": "N",
-      "tipoTarifa": "P",
-      "nroVuelo": "AR1234"
+      "tipoVuelo": "I",
+      "tipoTarifa": "B",
+      "nroVuelo": "CL1234"
     }
-headers:
-  - name: Content-Type
-    value: application/json
-    enabled: true
-  - name: Accept
-    value: application/json
-    enabled: true
+bodyType: application/json
 description: |-
   `POST /api/Pasajes/{idPasajero}`
 
-  Crea y asigna un pasaje al pasajero indicado.
+  Crea y asigna un pasaje al pasajero indicado. El servidor asigna
+  automáticamente el primer asiento libre del vuelo (`1A`, `1B`, ...).
 
   - `tipoVuelo`: `N` (nacional, precio base 200.000) o `I` (internacional, 500.000)
   - `tipoTarifa`: `F` (+250.000), `PE` (+300.000), `B` (+350.000) o `P` (+400.000)
@@ -35,3 +27,35 @@ description: |-
 
   Devuelve `201 Created` con el pasaje, `404` si el pasajero no existe o
   `400` si los datos del pasaje son inválidos.
+headers:
+- enabled: true
+  name: Content-Type
+  value: application/json
+  id: null
+- enabled: true
+  name: Accept
+  value: application/json
+  id: null
+method: POST
+name: Asignar pasaje
+sortPriority: 3.0
+url: ${[ base_url ]}/api/Pasajes/${[ pasajero_id ]}
+urlParameters: []
+settingSendCookies:
+  enabled: false
+  value: true
+settingStoreCookies:
+  enabled: false
+  value: true
+settingValidateCertificates:
+  enabled: false
+  value: true
+settingFollowRedirects:
+  enabled: false
+  value: true
+settingRequestTimeout:
+  enabled: false
+  value: 0
+settingHttpVersion:
+  enabled: false
+  value: auto

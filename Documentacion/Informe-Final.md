@@ -44,7 +44,7 @@
 
 ## 1. Introducción
 
-El proyecto consiste en una API REST para administrar el check-in de una aerolínea. La API permite gestionar pasajeros y los pasajes asociados a cada uno. Los datos se guardan en un archivo de texto (`Data/pasajeros.txt`), sin base de datos ni servicios externos.
+El proyecto consiste en una API REST para administrar el check-in de una aerolínea. La API permite gestionar pasajeros, los pasajes asociados a cada uno y sus equipajes, con la tarifa por exceso de peso. Los datos de pasajeros, pasajes y equipajes se guardan en un archivo de texto (`Data/pasajeros.txt`), sin base de datos ni servicios externos.
 
 La aplicación está desarrollada con **.NET 10** y **ASP.NET Core** con controladores. Se eligió una arquitectura en capas para separar las responsabilidades de presentación (HTTP), negocio y persistencia, de modo que cada integrante del grupo pueda trabajar sobre su módulo sin mezclar responsabilidades.
 
@@ -52,10 +52,9 @@ Alcance de esta entrega:
 
 - CRUD completo de pasajeros, con búsqueda por ID y por documento.
 - CRUD de pasajes asociados a un pasajero, con cálculo automático de precios.
+- CRUD de equipajes por pasajero, con validación de integridad, límite de peso y cálculo de la tarifa por exceso, persistidos junto con su pasajero.
 - Menú de descubrimiento de la API en `GET /api` y redirección de `GET /` hacia ese menú.
 - Manejo uniforme de errores de formato y de excepciones no controladas.
-
-El módulo de equipajes cuenta únicamente con las clases de dominio y sus excepciones; su servicio, endpoints y persistencia quedan pendientes (ver §9).
 
 ---
 
@@ -68,13 +67,13 @@ La solución se organiza en cuatro capas y una carpeta de datos:
 | `Controllers/` | Presentación (HTTP) | Recibe las peticiones, enlaza el JSON a los DTO, llama al servicio y traduce el resultado a códigos HTTP y mensajes. |
 | `Services/` | Negocio | Aplica las reglas del dominio: validaciones de formato, duplicados, cálculo de precios y armado de mensajes. No conoce HTTP ni detalles de archivos. |
 | `Repositorios/` | Persistencia | Lee y escribe el archivo de texto. Traduce los errores de disco a excepciones propias de la aplicación. |
-| `Modelos/` | Dominio | Entidades (`Pasajero`, `Pasaje`, `Equipaje`), DTO de entrada (`PasajeroRequest`, `PasajeRequest`) y excepciones del dominio. |
-| `Data/` | Datos | Archivo `pasajeros.txt`, con una línea por pasajero. |
+| `Modelos/` | Dominio | Entidades (`Pasajero`, `Pasaje`, `Equipaje`), DTO de entrada (`PasajeroRequest`, `PasajeRequest`, `EquipajeRequest`) y excepciones del dominio. |
+| `Data/` | Datos | Archivo `pasajeros.txt`, con una línea por pasajero que incluye su pasaje y sus equipajes. |
 
 Las dependencias se resuelven por inyección en `Program.cs`:
 
 - `IPasajeroRepository` se registra como `PasajeroRepositoryArchivo`, apuntando a `Data/pasajeros.txt`.
-- `PasajeroService`, `PasajeService` y `CheckInService` se registran con alcance *scoped*.
+- `PasajeroService`, `PasajeService`, `EquipajeService` y `CheckInService` se registran con alcance *scoped*.
 
 El flujo de una petición es siempre descendente: `Controller → Service → Repository → archivo`, y la respuesta vuelve por el mismo camino. Ninguna capa superior conoce cómo se guardan los datos, y el repositorio no conoce HTTP.
 
@@ -90,6 +89,7 @@ La clase `Pasajero` (`Modelos/Pasajero.cs`) representa a una persona que viaja. 
 
 - `Id`, `Nombre`, `Apellido`, `Documento`, `Email`, `Telefono`, `PasajeroFrecuente`.
 - `Pasaje` (opcional) y la propiedad calculada `TienePasaje`.
+- La lista de equipajes, expuesta con `getEquipajes()`, administrada con `agregarEquipaje(...)` y `quitarEquipaje(...)`, y publicada en las respuestas JSON mediante la propiedad `Equipajes`.
 
 El constructor valida la integridad mínima: `documento`, `nombre` y `apellido` no pueden estar vacíos; si lo están, lanza `DatosInvalidosException`. El email se normaliza a minúsculas y se recortan los espacios de los campos de texto.
 
@@ -109,7 +109,7 @@ El pasaje se administra con dos métodos que aplican reglas:
 | Teléfono | Opcional. Si viene, admite números, espacios, guiones, paréntesis y `+`, con 6 a 15 dígitos. |
 | Duplicados | No se permite dar de alta dos pasajeros con el mismo DNI. Al actualizar, el pasajero no se compara consigo mismo. |
 
-Los métodos públicos (`Agregar`, `Actualizar`, `Eliminar`) capturan las excepciones del dominio y devuelven una tupla `(bool exito, string mensaje)`. Así el controlador no necesita conocer los tipos de excepción del negocio. Al actualizar se conserva el pasaje existente.
+Los métodos públicos (`Agregar`, `Actualizar`, `Eliminar`) capturan las excepciones del dominio y devuelven una tupla `(bool exito, string mensaje)`. Así el controlador no necesita conocer los tipos de excepción del negocio. Al actualizar se conservan el pasaje y los equipajes existentes.
 
 ### 3.3 Datos de entrada
 
@@ -162,7 +162,7 @@ Los precios se calculan en el dominio:
 
 - `ListarPasajes()`: devuelve solo los pasajes asignados.
 - `ObtenerPasaje(idPasajero)`: devuelve el pasaje del pasajero o `null`.
-- `AgregarPasaje(idPasajero, request)`: verifica que el pasajero exista, crea el pasaje y lo asigna.
+- `AgregarPasaje(idPasajero, request)`: verifica que el pasajero exista, busca el primer asiento libre del vuelo y crea el pasaje con ese asiento. El avión se modela con filas `1` a `30` y columnas `A` a `F`; dos pasajes del mismo `nroVuelo` no repiten asiento.
 - `ActualizarPasaje(idPasajero, request)`: recalcula los precios y conserva la fecha de emisión y el asiento.
 - `EliminarPasaje(idPasajero)`: quita el pasaje del pasajero y conserva al pasajero.
 
@@ -188,13 +188,68 @@ El pasaje se identifica siempre por el **ID del pasajero** en la ruta: `/api/Pas
 
 ## 5. Módulo de Equipajes
 
-Este módulo se encuentra en estado de boceto. Lo que existe en el repositorio es:
+### 5.1 Dominio
 
-- `Modelos/Equipaje.cs`: clase `Equipaje` con `PesoKg` (solo lectura) e identificador, construida a partir del peso y el id.
-- `Modelos/Exceptions/EquipajeException.cs`: excepción base del módulo y `PesoExcedidoException`, que informa peso actual, peso máximo y número de ítem.
-- `Pasajero` ya contiene una lista interna de equipajes con `getEquipajes()` y `agregarEquipaje(...)`.
+La clase `Equipaje` (`Modelos/Equipaje.cs`) representa una valija o bulto asociado a un pasajero:
 
-No existen todavía servicio, controlador, registro en el contenedor de dependencias ni persistencia de equipajes en el archivo. Por ese motivo la API no expone endpoints de equipajes y el menú de `GET /api` no los lista. La rama `Equipaje` del repositorio remoto es un boceto y no se integró en esta entrega.
+- `CodigoEtiqueta`: identifica la etiqueta del equipaje.
+- `PasajeroId`: pasajero al que pertenece.
+- `PesoKg`: peso declarado.
+- `TipoEquipaje`: texto libre (por ejemplo, `Mano` o `Bodega`).
+- `TarifaExceso`: importe calculado por el servidor; el cliente no lo envía.
+
+`EquipajeException` (`Modelos/Exceptions/EquipajeException.cs`) es la excepción del módulo. El servicio la usa tanto para los errores de integridad como para los de peso.
+
+### 5.2 Servicio
+
+`EquipajeService` (`Services/EquipajeService.cs`) implementa las reglas del proyecto de origen:
+
+| Regla | Detalle |
+| --- | --- |
+| Integridad | El pasajero debe existir (`Error de integridad: El pasajero con ID '...' no existe en el sistema.`) y tener un pasaje asignado (`... no tiene un pasaje asignado.`). En ambos casos lanza `EquipajeException` y el manejador central responde `400`. |
+| Peso mínimo | `PesoKg` debe ser mayor que `0`; si no, lanza `EquipajeException` con `El peso del equipaje debe ser mayor a 0 kg.` |
+| Límite nacional | `15 kg` para vuelos nacionales (`N`). |
+| Límite internacional | `23 kg` para vuelos internacionales (`I`). |
+| Tarifa por exceso | `$2.500` por cada kilogramo que supere el límite. Si no hay exceso, la tarifa es `0`. |
+
+Además de calcular, el servicio administra el ciclo de vida de los equipajes:
+
+| Operación | Detalle |
+| --- | --- |
+| `ListarEquipajes()` | Recorre todos los pasajeros y devuelve sus equipajes. |
+| `ListarPorPasajero(idPasajero)` | Devuelve los equipajes del pasajero, o `null` si el pasajero no existe. |
+| `ObtenerPorCodigo(idPasajero, codigo)` | Busca un equipaje por su código de etiqueta, sin distinguir mayúsculas. |
+| `RegistrarEquipaje(equipaje)` | Valida integridad, peso y código; calcula la tarifa y guarda el pasajero actualizado. |
+| `ActualizarEquipaje(...)` | Cambia peso y tipo, recalcula la tarifa y guarda. El código de etiqueta no se modifica. |
+| `EliminarEquipaje(...)` | Quita el equipaje de la lista del pasajero y guarda. |
+
+El código de etiqueta es la identidad del equipaje dentro de su pasajero: se exige en el alta, no se puede repetir para el mismo pasajero y no cambia en la actualización. Las operaciones de actualización y baja devuelven una tupla `(bool exito, string mensaje, bool noEncontrado)` para que el controlador distinga entre `400` y `404`. El servicio se registra en el contenedor de dependencias de `Program.cs` con alcance *scoped*.
+
+### 5.3 Datos de entrada
+
+El cuerpo de `POST` y `PUT` se enlaza a `EquipajeRequest`:
+
+```json
+{
+  "codigoEtiqueta": "EQ-001",
+  "tipoEquipaje": "Bodega",
+  "pesoKg": 20
+}
+```
+
+El pasajero se identifica por la ruta (`/api/Equipaje/{idPasajero}`), igual que en Pasajes. En `PUT` y `DELETE` la ruta incluye además el código de etiqueta (`/api/Equipaje/{idPasajero}/{codigoEtiqueta}`). El servidor calcula `tarifaExceso`; por eso el campo no forma parte del DTO. El identificador del pasajero tampoco se envía en el cuerpo: lo aporta la ruta.
+
+Ejemplo: un equipaje de `20 kg` en un vuelo nacional (`15 kg` permitidos) genera un exceso de `5 kg` y una tarifa de `$12.500`. El mismo equipaje en un vuelo internacional no genera exceso, porque el límite es `23 kg`.
+
+### 5.4 Persistencia
+
+Los equipajes se guardan en la misma línea del pasajero dentro de `Data/pasajeros.txt`, en el campo opcional 15 (ver §6.1). No hay un archivo aparte ni un repositorio adicional: `EquipajeService` pide el pasajero a `IPasajeroRepository`, modifica su lista de equipajes y llama a `Actualizar(...)`, que reescribe el archivo.
+
+Esta decisión tiene tres consecuencias:
+
+- **Cascada automática:** al eliminar un pasajero desaparecen sus equipajes, porque estaban dentro de su línea.
+- **Compatibilidad:** el campo 15 es opcional, así que las líneas anteriores sin equipajes se siguen leyendo sin cambios.
+- **Consistencia:** al actualizar los datos personales de un pasajero, `PasajeroService.Actualizar` copia los equipajes existentes al objeto nuevo, de modo que una edición no los borra.
 
 ---
 
@@ -210,11 +265,24 @@ Cada pasajero ocupa una línea con campos separados por `|`:
 Id | Nombre | Apellido | Documento | PasajeroFrecuente | Email | Teléfono
    | IdPasaje | TipoVuelo | TipoTarifa | NroVuelo
    | PrecioBase | PrecioFinal | FechaEmision | Asiento
+   | Equipajes (opcional)
 ```
 
-Si el pasajero no tiene pasaje, los últimos ocho campos quedan vacíos. El DNI del pasaje no se guarda porque es el mismo del pasajero. Los decimales y las fechas se escriben con `CultureInfo.InvariantCulture` y formato ISO 8601, para que el archivo se lea igual en cualquier máquina.
+Si el pasajero no tiene pasaje, los ocho campos del pasaje quedan vacíos. El DNI del pasaje no se guarda porque es el mismo del pasajero. Los decimales y las fechas se escriben con `CultureInfo.InvariantCulture` y formato ISO 8601, para que el archivo se lea igual en cualquier máquina.
 
-`Pasajero.ToString()` genera la línea y `Pasajero.FromString(linea)` la reconstruye. Si una línea está dañada, no se ignora en silencio: se lanza `ArchivoException` con el número de línea, para evitar que una operación posterior reescriba el archivo sin esos registros.
+El campo 15 es opcional y solo se escribe si el pasajero tiene equipajes. Cada equipaje ocupa un bloque con cuatro datos separados por comas, y los bloques se separan con `;`:
+
+```text
+codigo,tipo,peso,tarifa;codigo,tipo,peso,tarifa
+```
+
+El código de etiqueta y el tipo de equipaje se escapan con `Uri.EscapeDataString` antes de guardarse y se recuperan con `Uri.UnescapeDataString`, para que una coma o un punto y coma dentro de un texto no rompa el formato. El peso y la tarifa se escriben con `CultureInfo.InvariantCulture`. Por ejemplo, un pasajero con dos equipajes podría terminar la línea así:
+
+```text
+...|AR1234|200000|600000|2026-11-17T10:30:00.0000000-03:00|14A|EQ-001,Bodega,20,12500;EQ-002,Mano,10,0
+```
+
+`Pasajero.ToString()` genera la línea y `Pasajero.FromString(linea)` la reconstruye, incluidos los equipajes. Si una línea está dañada, no se ignora en silencio: se lanza `ArchivoException` con el número de línea, para evitar que una operación posterior reescriba el archivo sin esos registros.
 
 ### 6.2 Operaciones
 
@@ -233,7 +301,7 @@ Si el pasajero no tiene pasaje, los últimos ocho campos quedan vacíos. El DNI 
 - La reescritura se hace sobre un archivo temporal (`pasajeros.txt.tmp`) y luego se reemplaza el original con `File.Move(..., overwrite: true)`. Si falla la escritura, el archivo original no queda vacío.
 - Los errores de disco (`FileNotFoundException`, `DirectoryNotFoundException`, `UnauthorizedAccessException`, `IOException`) se traducen a `ArchivoException`, la excepción propia de la capa de persistencia.
 
-Los equipajes no se persisten todavía: el archivo guarda solamente los datos del pasajero y su pasaje.
+Como los equipajes viven en la línea del pasajero, cualquier operación sobre ellos reutiliza la reescritura segura descripta arriba: no hay un camino de escritura alternativo.
 
 ---
 
@@ -249,7 +317,8 @@ Los equipajes no se persisten todavía: el archivo guarda solamente los datos de
   "descripcion": "API de check-in de una aerolínea",
   "modulos": [
     { "entidad": "Pasajeros", "ruta": "/api/Pasajero", "operaciones": ["..."] },
-    { "entidad": "Pasajes", "ruta": "/api/Pasajes", "operaciones": ["..."] }
+    { "entidad": "Pasajes", "ruta": "/api/Pasajes", "operaciones": ["..."] },
+    { "entidad": "Equipajes", "ruta": "/api/Equipaje", "operaciones": ["..."] }
   ]
 }
 ```
@@ -267,6 +336,8 @@ Los equipajes no se persisten todavía: el archivo guarda solamente los datos de
 | `PUT` | `/api/Pasajero/{id}` | `200`, `404` si no existe, `400` si es inválido. |
 | `DELETE` | `/api/Pasajero/{id}` | `200`, o `404` si no existe. |
 
+Las respuestas de los `GET` de Pasajeros incluyen el pasaje (`pasaje`) y los equipajes (`equipajes`) del pasajero. Los equipajes también se pueden consultar por separado en `/api/Equipaje/{idPasajero}`.
+
 ### 7.3 Endpoints de Pasajes
 
 | Método | Ruta | Respuesta |
@@ -275,13 +346,24 @@ Los equipajes no se persisten todavía: el archivo guarda solamente los datos de
 | `GET` | `/api/Pasajes/{idPasajero}` | `200` con el pasaje, o `404`. |
 | `POST` | `/api/Pasajes/{idPasajero}` | `201`, `404` si el pasajero no existe, `400` si los datos son inválidos. |
 | `PUT` | `/api/Pasajes/{idPasajero}` | `200` con mensaje, `404` si el pasajero no existe, `400` si los datos son inválidos. |
-| `DELETE` | `/api/Pasajes/{idPasajero}` | `204`, o `404` si el pasajero no existe. |
+| `DELETE` | `/api/Pasajes/{idPasajero}` | `200` con `{ "mensaje": ... }`, `404` si el pasajero no existe o no tiene pasaje, `400` si falla la escritura. |
 
-### 7.4 Mapeo de entradas y mensajes
+### 7.4 Endpoints de Equipajes
+
+| Método | Ruta | Respuesta |
+| --- | --- | --- |
+| `GET` | `/api/Equipaje` | `200` con todos los equipajes registrados. |
+| `GET` | `/api/Equipaje/{idPasajero}` | `200` con la lista del pasajero, o `404` si el pasajero no existe. |
+| `GET` | `/api/Equipaje/{idPasajero}/{codigoEtiqueta}` | `200` con el equipaje, o `404`. |
+| `POST` | `/api/Equipaje/{idPasajero}` | `201` con el equipaje y la `tarifaExceso` calculada, o `400` si el pasajero no existe, no tiene pasaje, el peso es inválido o el código está vacío o repetido. |
+| `PUT` | `/api/Equipaje/{idPasajero}/{codigoEtiqueta}` | `200` con mensaje, `404` si el pasajero o el equipaje no existen, `400` si el peso es inválido. |
+| `DELETE` | `/api/Equipaje/{idPasajero}/{codigoEtiqueta}` | `200` con mensaje, o `404` si el pasajero o el equipaje no existen. |
+
+### 7.5 Mapeo de entradas y mensajes
 
 El controlador es la única capa que conoce HTTP:
 
-1. Recibe el cuerpo JSON y lo enlaza a `PasajeroRequest` o `PasajeRequest`.
+1. Recibe el cuerpo JSON y lo enlaza a `PasajeroRequest`, `PasajeRequest` o `EquipajeRequest`.
 2. Llama al servicio correspondiente.
 3. Traduce el resultado:
    - objeto encontrado → `200 OK`;
@@ -289,16 +371,18 @@ El controlador es la única capa que conoce HTTP:
    - `(false, mensaje)` → `400 Bad Request` con el mensaje;
    - `(true, mensaje)` → `200 OK` con el mensaje.
 
-Los errores de negocio de Pasajeros se devuelven como texto plano. Los de Pasajes usan `{ "mensaje": ... }` porque ese controlador ya expone ese contrato. Los errores de formato del JSON y las excepciones no controladas usan siempre `{ "mensaje": ... }`.
+En Equipajes, la ruta aporta el ID del pasajero y, en `PUT` y `DELETE`, también el código de etiqueta. El cuerpo aporta los datos del equipaje. El controlador arma el objeto `Equipaje`, llama al servicio y responde `201` con la tarifa ya calculada al crear, `200` con `{ "mensaje": ... }` al actualizar o eliminar, y `404` cuando el pasajero o el equipaje no existen.
 
-### 7.5 Control central de excepciones
+Los errores de negocio de Pasajeros se devuelven como texto plano. Los de Pasajes usan `{ "mensaje": ... }` porque ese controlador ya expone ese contrato. Los de Equipajes también usan `{ "mensaje": ... }`: el servicio lanza `EquipajeException` y la traduce el manejador central. Los errores de formato del JSON y las excepciones no controladas usan siempre `{ "mensaje": ... }`.
+
+### 7.6 Control central de excepciones
 
 `Program.cs` configura un manejador que traduce las excepciones de las capas inferiores:
 
 | Excepción | HTTP | Mensaje |
 | --- | --- | --- |
 | `DatosException` / `DatosInvalidosException` | `400` | Detalle del campo inválido. |
-| `EquipajeException` / `PesoExcedidoException` | `400` | Detalle del exceso. |
+| `EquipajeException` | `400` | Error de integridad o de peso (pasajero sin pasaje, peso no positivo). |
 | `ArchivoException` | `500` | Mensaje de persistencia (archivo faltante, línea dañada, permisos). |
 | `UnauthorizedAccessException` | `500` | Sin permisos sobre el archivo. |
 | `IOException` | `500` | Error de lectura o escritura. |
@@ -351,15 +435,51 @@ sequenceDiagram
     end
 ```
 
+**Ejemplo con registro de equipaje:**
+
+```mermaid
+sequenceDiagram
+    participant U as Cliente
+    participant C as EquipajeController
+    participant S as EquipajeService
+    participant R as PasajeroRepositoryArchivo
+    participant F as Data/pasajeros.txt
+
+    U->>C: POST /api/Equipaje/7
+    C->>S: RegistrarEquipaje(equipaje)
+    S->>R: ObtenerPorId(7)
+    R->>F: Leer líneas
+    F-->>R: datos
+    R-->>S: pasajero o null
+    alt pasajero o pasaje inexistente, peso inválido o código repetido
+        S-->>C: EquipajeException
+        C-->>U: 400 + { mensaje }
+    else alta válida
+        S->>S: Calcular TarifaExceso
+        S->>R: Actualizar(pasajero con el nuevo equipaje)
+        R->>F: Reescribir línea del pasajero
+        S-->>C: equipaje guardado
+        C-->>U: 201 + equipaje
+    end
+```
+
 **Guion para la exposición:**
 
-1. Abrir `GET /api` y mostrar el menú de módulos.
+1. Abrir `GET /api` y mostrar el menú de módulos, incluido Equipajes con sus seis rutas.
 2. Crear un pasajero y mostrar el mensaje de éxito.
 3. Repetir el alta con el mismo documento y mostrar el `400` con el mensaje de duplicado.
-4. Consultar el pasajero por documento.
-5. Asignar un pasaje al pasajero, consultarlo y actualizarlo.
-6. Enviar un tipo de vuelo inválido y mostrar el error de negocio.
-7. Eliminar el pasajero y mostrar el `404` al volver a consultarlo.
+4. Consultar el pasajero por documento y guardar su `id`.
+5. Asignar un pasaje nacional al pasajero y consultarlo.
+6. Registrar un equipaje de `20 kg` con el código `EQ-001` y mostrar el `201` con `tarifaExceso` de `$12.500`.
+7. Registrar un equipaje de `10 kg` con el código `EQ-002` y mostrar que la tarifa es `0`.
+8. Listar con `GET /api/Equipaje/{id}` y consultar `GET /api/Equipaje/{id}/EQ-001`.
+9. Enviar `pesoKg: 0` y mostrar el `400` con el mensaje de peso inválido; repetir el código `EQ-001` y mostrar el `400` de duplicado.
+10. Actualizar `EQ-001` a `30 kg` con `PUT` y mostrar el recálculo de la tarifa.
+11. Actualizar los datos personales del pasajero con `PUT /api/Pasajero/{id}` y volver a listar sus equipajes para mostrar que siguen ahí.
+12. Reiniciar la API, consultar de nuevo y mostrar que los equipajes se conservaron en el archivo.
+13. Eliminar `EQ-002` con `DELETE` y mostrar que ya no aparece.
+14. Enviar un tipo de vuelo inválido y mostrar el error de negocio.
+15. Eliminar el pasajero y mostrar el `404` al volver a consultarlo o al pedir sus equipajes.
 
 ---
 
@@ -368,11 +488,13 @@ sequenceDiagram
 | Módulo | Estado | Pendiente |
 | --- | --- | --- |
 | Pasajeros | CRUD completo y búsqueda por documento | — |
-| Pasajes | CRUD completo con precios, asiento y fecha de emisión | Control de asiento ocupado, si se exige. |
-| Equipajes | Clases de dominio y excepción | Servicio, endpoints y persistencia. La rama `Equipaje` es un boceto sin controller ni registro en DI. |
-| Persistencia | Alta, lectura, modificación y baja de pasajeros con escritura segura | Persistir equipajes. |
-| Control e integración | Menú, endpoints, mapeo, mensajes y manejo central de errores | Completar el módulo de equipajes cuando esté disponible. |
+| Pasajes | CRUD completo con precios, asiento y fecha de emisión | Reasignación de asiento al cambiar de vuelo, si se exige. |
+| Equipajes | CRUD completo por pasajero, con validación de integridad, límite de peso, tarifa por exceso y persistencia | — |
+| Persistencia | Alta, lectura, modificación y baja de pasajeros, pasajes y equipajes con escritura segura | — |
+| Control e integración | Menú con Pasajeros, Pasajes y Equipajes; endpoints, mapeo, mensajes y manejo central de errores | — |
 
 ## 10. Conclusiones
 
-La separación en capas permite que cada integrante trabaje sobre su módulo sin mezclar responsabilidades: el controlador no sabe cómo se guarda un pasajero, el servicio no sabe cómo se escribe un archivo y el repositorio no conoce HTTP. El resultado es una API funcional para pasajeros y pasajes, con mensajes de éxito y error uniformes, un menú de descubrimiento y una base preparada para incorporar equipajes.
+La separación en capas permitió que cada integrante trabajara sobre su módulo sin mezclar responsabilidades: el controlador no sabe cómo se guarda un pasajero, el servicio no sabe cómo se escribe un archivo y el repositorio no conoce HTTP. El resultado es una API funcional para pasajeros, pasajes y equipajes, con cálculo automático de precios y tarifas, mensajes de éxito y error uniformes, un menú de descubrimiento y persistencia completa en un único archivo de texto.
+
+Guardar los equipajes dentro de la línea de su pasajero simplificó la integridad: no hizo falta un repositorio nuevo ni una clave foránea manual, la baja del pasajero arrastra sus equipajes y el formato anterior sigue siendo válido gracias al campo opcional. La principal enseñanza fue que un formato de texto simple exige cuidar el escapado y la compatibilidad hacia atrás.

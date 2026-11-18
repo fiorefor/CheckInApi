@@ -41,6 +41,20 @@ public class InicioController : ControllerBase
                         "PUT /api/Pasajes/{idPasajero}",
                         "DELETE /api/Pasajes/{idPasajero}"
                     }
+                },
+                new
+                {
+                    entidad = "Equipajes",
+                    ruta = "/api/Equipaje",
+                    operaciones = new[]
+                    {
+                        "GET /api/Equipaje",
+                        "GET /api/Equipaje/{idPasajero}",
+                        "GET /api/Equipaje/{idPasajero}/{codigoEtiqueta}",
+                        "POST /api/Equipaje/{idPasajero}",
+                        "PUT /api/Equipaje/{idPasajero}/{codigoEtiqueta}",
+                        "DELETE /api/Equipaje/{idPasajero}/{codigoEtiqueta}"
+                    }
                 }
             }
         });
