@@ -1,4 +1,3 @@
-// Datos que llegan en el body de POST/PUT /api/Pasajero.
 public class PasajeroRequest
 {
     public string? Nombre { get; set; }
