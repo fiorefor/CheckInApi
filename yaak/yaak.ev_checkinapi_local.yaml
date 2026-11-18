@@ -1,0 +1,23 @@
+type: environment
+model: environment
+id: ev_checkinapi_local
+workspaceId: wk_checkinapi
+createdAt: "2026-11-17T12:00:00.000000000"
+updatedAt: "2026-11-17T12:00:00.000000000"
+name: Local
+public: true
+base: true
+parentModel: workspace
+parentId: null
+variables:
+  - name: base_url
+    value: http://localhost:5129
+    enabled: true
+  - name: pasajero_id
+    value: "1"
+    enabled: true
+  - name: documento
+    value: "12345678"
+    enabled: true
+color: null
+sortPriority: 0

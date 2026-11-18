@@ -1,4 +1,4 @@
-1|Ada|Lovelace|12345678|AR123|ada@correo.com|3764123456|0|N|P|AR1234|1|1|2026-11-17T09:17:02.4135429-03:00|1
+1|Ada|Lovelace|12345678|1234567890|ada@mail.com|+54 11 5555-1234||||||||
 2|Alan|Turing|23456789|AR456|alan@correo.com|3764000000|0|N|P|AR1234|1|1|2026-11-17T09:18:42.1845066-03:00|1
 3|Grace|Hopper|34567890||grace@correo.com|3764222222||||||||
 4|Linus|Torvalds|45678901|AR789|linus@correo.com|3764333333||||||||

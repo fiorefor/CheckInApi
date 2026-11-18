@@ -1,0 +1,13 @@
+type: folder
+model: folder
+id: fl_checkinapi_pasajes
+workspaceId: wk_checkinapi
+createdAt: "2026-11-17T12:00:00.000000000"
+updatedAt: "2026-11-17T12:00:00.000000000"
+name: Pasajes
+folderId: null
+description: |-
+  Endpoints de `PasajesController` (ruta base `/api/Pasajes`).
+
+  `tipoVuelo`: `N` (nacional) o `I` (internacional).
+  `tipoTarifa`: `P`, `B`, `PE` o `F`.

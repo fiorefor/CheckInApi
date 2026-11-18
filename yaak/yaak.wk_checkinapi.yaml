@@ -1,0 +1,32 @@
+type: workspace
+model: workspace
+id: wk_checkinapi
+createdAt: "2026-11-17T12:00:00.000000000"
+updatedAt: "2026-11-17T12:00:00.000000000"
+name: CheckInApi
+description: |-
+  Workspace para probar la API de check-in de pasajes.
+
+  Antes de enviar requests, arrancá la API desde la raíz del proyecto:
+
+  ```
+  dotnet run
+  ```
+
+  La API escucha en `http://localhost:5129` (perfil `http` de `launchSettings.json`).
+  Ese valor está en la variable de entorno `base_url`.
+
+  Carpetas:
+  - **Pasajeros**: `/api/Pasajero` (listar, obtener, crear, actualizar, eliminar)
+  - **Pasajes**: `/api/Pasajes` (listar, obtener, asignar, actualizar, eliminar)
+authentication: {}
+authenticationType: null
+headers: []
+settingValidateCertificates: true
+settingFollowRedirects: true
+settingRequestTimeout: 0
+settingRequestMessageSize: 67108864
+settingDnsOverrides: []
+settingSendCookies: true
+settingStoreCookies: true
+settingHttpVersion: auto

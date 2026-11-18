@@ -1,39 +1,57 @@
+using CheckInApi.Modelos.Exceptions;
+using CheckInApi.Services;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Registro de servicios en el contenedor de dependencias
-//Habilita Controllers (pasajerocontroller, pasajecontroller,etc
-builder.Services.AddControllers();
-
-// PERSISTENCIA Y LOGICA DE NEGOCIO
+builder.Services.AddControllers()
+    .ConfigureApiBehaviorOptions(opciones =>
+    {
+        // Usa el mismo formato de error que el manejador central.
+        opciones.InvalidModelStateResponseFactory = _ =>
+            new BadRequestObjectResult(new
+            {
+                mensaje = "Los datos enviados no son válidos. Verifique el formato del JSON y los campos obligatorios."
+            });
+    });
 
 string path = Path.Combine(builder.Environment.ContentRootPath, "Data", "pasajeros.txt");
 
-//Cuando en interfaz se pida un IpasajeroRepository se le entrega un PasajeroRepositoryArchivo (clase que guarda el .txt)
-//Si deseamos cambiar a bd solo cambiamos esta linea
 builder.Services.AddScoped<IPasajeroRepository>(provider => new PasajeroRepositoryArchivo(path));
-
-//Capa de nogocios: recibe el repositorio por su construcción (inyecciónde dependencia)
 builder.Services.AddScoped<PasajeroService>();
 builder.Services.AddScoped<CheckInService>();
 builder.Services.AddScoped<CheckInApi.Services.PasajeService>();
 
-
-//OpenAI: genera descripción de la Api. La plantilla de Visual, la trae por defecto https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Configure the HTTP peticiones pipeline.s
-//Solo en modo de desarrollo se publica la descripcion
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
-//Redirige peticiones Http a Https
+
+// Traduce las excepciones de las capas inferiores a respuestas HTTP uniformes.
+app.UseExceptionHandler(error => error.Run(async context =>
+{
+    var excepcion = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+    var (estado, mensaje) = excepcion switch
+    {
+        ArchivoException archivo => (StatusCodes.Status500InternalServerError, archivo.Message),
+        DatosException datos => (StatusCodes.Status400BadRequest, datos.Message),
+        EquipajeException equipaje => (StatusCodes.Status400BadRequest, equipaje.Message),
+        UnauthorizedAccessException => (StatusCodes.Status500InternalServerError, "No hay permisos para acceder al archivo de datos."),
+        IOException => (StatusCodes.Status500InternalServerError, "No se pudo leer o escribir el archivo de datos."),
+        _ => (StatusCodes.Status500InternalServerError, "Ocurrió un error inesperado. Intente nuevamente.")
+    };
+    context.Response.StatusCode = estado;
+    await context.Response.WriteAsJsonAsync(new { mensaje });
+}));
+
 app.UseHttpsRedirection();
-//Habilita Autorizacion (trae plantilla aunque el proyecto no lo use)
 app.UseAuthorization();
-//Conecta rutas de controllers
 app.MapControllers();
-//Arranca api
+app.MapGet("/", () => Results.Redirect("/api"));
+
 app.Run();

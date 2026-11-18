@@ -1,0 +1,37 @@
+type: http_request
+model: http_request
+id: rq_checkinapi_pasajes_asignar
+workspaceId: wk_checkinapi
+folderId: fl_checkinapi_pasajes
+createdAt: "2026-11-17T12:00:00.000000000"
+updatedAt: "2026-11-17T12:00:00.000000000"
+name: Asignar pasaje
+method: POST
+url: "${[ base_url ]}/api/Pasajes/${[ pasajero_id ]}"
+sortPriority: 3
+bodyType: application/json
+body:
+  text: |-
+    {
+      "tipoVuelo": "N",
+      "tipoTarifa": "P",
+      "nroVuelo": "AR1234"
+    }
+headers:
+  - name: Content-Type
+    value: application/json
+    enabled: true
+  - name: Accept
+    value: application/json
+    enabled: true
+description: |-
+  `POST /api/Pasajes/{idPasajero}`
+
+  Crea y asigna un pasaje al pasajero indicado.
+
+  - `tipoVuelo`: `N` (nacional, precio base 200.000) o `I` (internacional, 500.000)
+  - `tipoTarifa`: `F` (+250.000), `PE` (+300.000), `B` (+350.000) o `P` (+400.000)
+  - `nroVuelo`: obligatorio
+
+  Devuelve `201 Created` con el pasaje, `404` si el pasajero no existe o
+  `400` si los datos del pasaje son inválidos.

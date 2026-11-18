@@ -1,0 +1,36 @@
+type: http_request
+model: http_request
+id: rq_checkinapi_pasajeros_crear
+workspaceId: wk_checkinapi
+folderId: fl_checkinapi_pasajeros
+createdAt: "2026-11-17T12:00:00.000000000"
+updatedAt: "2026-11-17T12:00:00.000000000"
+name: Crear pasajero
+method: POST
+url: "${[ base_url ]}/api/Pasajero"
+sortPriority: 3
+bodyType: application/json
+body:
+  text: |-
+    {
+      "nombre": "Ada",
+      "apellido": "Lovelace",
+      "documento": "${[ documento ]}",
+      "email": "ada@mail.com",
+      "telefono": "+54 11 5555-1234",
+      "pasajeroFrecuente": "1234567890"
+    }
+headers:
+  - name: Content-Type
+    value: application/json
+    enabled: true
+  - name: Accept
+    value: application/json
+    enabled: true
+description: |-
+  `POST /api/Pasajero`
+
+  Cuerpo: `PasajeroRequest` (`nombre`, `apellido`, `documento`, `email`, `telefono`, `pasajeroFrecuente`).
+
+  Reglas: `documento` de 7 u 8 dígitos (sin puntos o con puntos) y `email` obligatorio con formato válido.
+  Devuelve `400 Bad Request` si hay datos inválidos o el DNI ya existe.
