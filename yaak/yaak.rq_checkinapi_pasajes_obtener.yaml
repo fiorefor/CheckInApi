@@ -10,7 +10,7 @@ authenticationType: null
 body: {}
 bodyType: null
 description: |-
-  `GET /api/Pasajes/{idPasajero}`
+  `GET /api/pasajes/{idPasajero}`
 
   El parámetro es el **ID del pasajero**. Devuelve `404` si el pasajero no existe
   o si todavía no tiene un pasaje asignado.
@@ -22,7 +22,7 @@ headers:
 method: GET
 name: Obtener pasaje del pasajero
 sortPriority: 2.0
-url: ${[ base_url ]}/api/Pasajes/${[ pasajero_id ]}
+url: ${[ base_url ]}/api/pasajes/${[ pasajero_id ]}
 urlParameters:
 - enabled: true
   name: ''

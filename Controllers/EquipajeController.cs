@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CheckInApi.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/equipajes")]
 public class EquipajeController : ControllerBase
 {
     private readonly EquipajeService servicio;

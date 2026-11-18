@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CheckInApi.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/pasajeros")]
 public class PasajeroController : ControllerBase
 {
     private readonly PasajeroService servicio;
@@ -26,7 +26,7 @@ public class PasajeroController : ControllerBase
         var pasajero = servicio.ObtenerPorId(id);
         if (pasajero == null)
         {
-            return NotFound($"No se encontró un pasajero con ID {id}.");
+            return NotFound(new { mensaje = $"No se encontró un pasajero con ID {id}." });
         }
         return Ok(pasajero);
     }
@@ -37,7 +37,7 @@ public class PasajeroController : ControllerBase
         var pasajero = servicio.ObtenerPorDocumento(documento);
         if (pasajero == null)
         {
-            return NotFound($"No se encontró un pasajero con el documento {documento}.");
+            return NotFound(new { mensaje = $"No se encontró un pasajero con el documento {documento}." });
         }
         return Ok(pasajero);
     }
@@ -48,40 +48,38 @@ public class PasajeroController : ControllerBase
         var (exito, mensaje) = servicio.Agregar(pasajero);
         if (!exito)
         {
-            return BadRequest(mensaje);
+            return BadRequest(new { mensaje });
         }
-        return Ok(mensaje);
+        return StatusCode(StatusCodes.Status201Created, new { mensaje });
     }
 
     [HttpPut("{id:int}")]
     public ActionResult Actualizar(int id, [FromBody] PasajeroRequest pasajero)
     {
-        if (servicio.ObtenerPorId(id) == null)
+        var (exito, mensaje, noEncontrado) = servicio.Actualizar(id, pasajero);
+        if (noEncontrado)
         {
-            return NotFound($"No se encontró un pasajero con ID {id}.");
+            return NotFound(new { mensaje });
         }
-
-        var (exito, mensaje) = servicio.Actualizar(id, pasajero);
         if (!exito)
         {
-            return BadRequest(mensaje);
+            return BadRequest(new { mensaje });
         }
-        return Ok(mensaje);
+        return Ok(new { mensaje });
     }
 
     [HttpDelete("{id:int}")]
     public ActionResult Eliminar(int id)
     {
-        if (servicio.ObtenerPorId(id) == null)
+        var (exito, mensaje, noEncontrado) = servicio.Eliminar(id);
+        if (noEncontrado)
         {
-            return NotFound($"No se encontró un pasajero con ID {id}.");
+            return NotFound(new { mensaje });
         }
-
-        var (exito, mensaje) = servicio.Eliminar(id);
         if (!exito)
         {
-            return BadRequest(mensaje);
+            return BadRequest(new { mensaje });
         }
-        return Ok(mensaje);
+        return Ok(new { mensaje });
     }
 }

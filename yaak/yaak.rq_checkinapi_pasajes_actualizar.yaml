@@ -16,7 +16,7 @@ body:
     }
 bodyType: application/json
 description: |-
-  `PUT /api/Pasajes/{idPasajero}`
+  `PUT /api/pasajes/{idPasajero}`
 
   Recalcula precio base y precio final según `tipoVuelo` y `tipoTarifa`.
   El pasajero debe tener ya un pasaje asignado; si no, devuelve `404`.
@@ -32,7 +32,7 @@ headers:
 method: PUT
 name: Actualizar pasaje
 sortPriority: 4.0
-url: ${[ base_url ]}/api/Pasajes/${[ pasajero_id ]}
+url: ${[ base_url ]}/api/pasajes/${[ pasajero_id ]}
 urlParameters: []
 settingSendCookies:
   enabled: false

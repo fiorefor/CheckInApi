@@ -7,13 +7,13 @@ createdAt: "2026-11-17T12:00:00.000000000"
 updatedAt: "2026-11-17T12:00:00.000000000"
 name: Obtener pasajero por ID
 method: GET
-url: "${[ base_url ]}/api/Pasajero/${[ pasajero_id ]}"
+url: "${[ base_url ]}/api/pasajeros/${[ pasajero_id ]}"
 sortPriority: 2
 headers:
   - name: Accept
     value: application/json
     enabled: true
 description: |-
-  `GET /api/Pasajero/{id}`
+  `GET /api/pasajeros/{id}`
 
   Devuelve `404 Not Found` con un mensaje si el ID no existe.

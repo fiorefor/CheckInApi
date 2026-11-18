@@ -7,13 +7,13 @@ createdAt: "2026-11-17T12:00:00.000000000"
 updatedAt: "2026-11-17T12:00:00.000000000"
 name: Listar pasajeros
 method: GET
-url: "${[ base_url ]}/api/Pasajero"
+url: "${[ base_url ]}/api/pasajeros"
 sortPriority: 1
 headers:
   - name: Accept
     value: application/json
     enabled: true
 description: |-
-  `GET /api/Pasajero`
+  `GET /api/pasajeros`
 
   Devuelve la lista completa de pasajeros guardados en `Data/pasajeros.txt`.

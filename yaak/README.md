@@ -28,7 +28,7 @@ Queda creado el workspace **CheckInApi** con las carpetas *Pasajeros*, *Pasajes*
 | `documento` | `12345678` | DNI usado en los cuerpos de alta/actualización |
 | `codigo_etiqueta` | `EQ-001` | Código del equipaje en las rutas de Equipajes |
 
-Las URLs usan templates de Yaak: `${[ base_url ]}/api/Pasajero/${[ pasajero_id ]}`.
+Las URLs usan templates de Yaak: `${[ base_url ]}/api/pasajeros/${[ pasajero_id ]}`.
 
 > `pasajero_id` es el **ID del pasajero**, no el `idPasaje`. En el conjunto de ejemplo,
 > el pasajero `1` (Ada Lovelace) ya tiene pasaje, así que sirve para probar Equipajes
@@ -36,27 +36,30 @@ Las URLs usan templates de Yaak: `${[ base_url ]}/api/Pasajero/${[ pasajero_id ]
 
 ## Requests incluidos
 
-### Pasajeros (`/api/Pasajero`)
+### Pasajeros (`/api/pasajeros`)
 
 | Request | Método y ruta |
 | --- | --- |
-| Listar pasajeros | `GET /api/Pasajero` |
-| Obtener pasajero por ID | `GET /api/Pasajero/{id}` |
-| Crear pasajero | `POST /api/Pasajero` |
-| Actualizar pasajero | `PUT /api/Pasajero/{id}` |
-| Eliminar pasajero | `DELETE /api/Pasajero/{id}` |
+| Listar pasajeros | `GET /api/pasajeros` |
+| Obtener pasajero por ID | `GET /api/pasajeros/{id}` |
+| Crear pasajero | `POST /api/pasajeros` |
+| Actualizar pasajero | `PUT /api/pasajeros/{id}` |
+| Eliminar pasajero | `DELETE /api/pasajeros/{id}` |
 
 Los `GET` devuelven el pasajero con su `pasaje` y sus `equipajes`.
 
-### Pasajes (`/api/Pasajes`)
+Crear pasajero responde `201` con `{ "mensaje": "Pasajero agregado exitosamente con ID N." }`.
+Las demás operaciones devuelven el recurso o `{ "mensaje": ... }`.
+
+### Pasajes (`/api/pasajes`)
 
 | Request | Método y ruta |
 | --- | --- |
-| Listar pasajes | `GET /api/Pasajes` |
-| Obtener pasaje del pasajero | `GET /api/Pasajes/{idPasajero}` |
-| Asignar pasaje | `POST /api/Pasajes/{idPasajero}` |
-| Actualizar pasaje | `PUT /api/Pasajes/{idPasajero}` |
-| Eliminar pasaje | `DELETE /api/Pasajes/{idPasajero}` |
+| Listar pasajes | `GET /api/pasajes` |
+| Obtener pasaje del pasajero | `GET /api/pasajes/{idPasajero}` |
+| Asignar pasaje | `POST /api/pasajes/{idPasajero}` |
+| Actualizar pasaje | `PUT /api/pasajes/{idPasajero}` |
+| Eliminar pasaje | `DELETE /api/pasajes/{idPasajero}` |
 
 `tipoVuelo` acepta `N` o `I`; `tipoTarifa` acepta `P`, `B`, `PE` o `F`.
 
@@ -66,16 +69,16 @@ Al asignar un pasaje, el servidor toma el primer asiento libre del vuelo y lo de
 **Eliminar pasaje** responde `200` con `{ "mensaje": "Pasaje eliminado correctamente." }`,
 `404` si el pasajero no existe o no tiene pasaje, y `400` si falla la escritura del archivo.
 
-### Equipajes (`/api/Equipaje`)
+### Equipajes (`/api/equipajes`)
 
 | Request | Método y ruta |
 | --- | --- |
-| Listar equipajes | `GET /api/Equipaje` |
-| Listar equipajes del pasajero | `GET /api/Equipaje/{idPasajero}` |
-| Obtener equipaje por código | `GET /api/Equipaje/{idPasajero}/{codigoEtiqueta}` |
-| Registrar equipaje | `POST /api/Equipaje/{idPasajero}` |
-| Actualizar equipaje | `PUT /api/Equipaje/{idPasajero}/{codigoEtiqueta}` |
-| Eliminar equipaje | `DELETE /api/Equipaje/{idPasajero}/{codigoEtiqueta}` |
+| Listar equipajes | `GET /api/equipajes` |
+| Listar equipajes del pasajero | `GET /api/equipajes/{idPasajero}` |
+| Obtener equipaje por código | `GET /api/equipajes/{idPasajero}/{codigoEtiqueta}` |
+| Registrar equipaje | `POST /api/equipajes/{idPasajero}` |
+| Actualizar equipaje | `PUT /api/equipajes/{idPasajero}/{codigoEtiqueta}` |
+| Eliminar equipaje | `DELETE /api/equipajes/{idPasajero}/{codigoEtiqueta}` |
 
 - El pasajero debe tener un pasaje antes de registrar equipajes.
 - `codigoEtiqueta` es obligatorio, único por pasajero y no se modifica en el `PUT`.

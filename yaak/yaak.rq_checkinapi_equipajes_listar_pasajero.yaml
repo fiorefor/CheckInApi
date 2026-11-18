@@ -7,14 +7,14 @@ createdAt: "2026-11-17T12:00:00.000000000"
 updatedAt: "2026-11-17T12:00:00.000000000"
 name: Listar equipajes del pasajero
 method: GET
-url: "${[ base_url ]}/api/Equipaje/${[ pasajero_id ]}"
+url: "${[ base_url ]}/api/equipajes/${[ pasajero_id ]}"
 sortPriority: 2
 headers:
   - name: Accept
     value: application/json
     enabled: true
 description: |-
-  `GET /api/Equipaje/{idPasajero}`
+  `GET /api/equipajes/{idPasajero}`
 
   Devuelve la lista de equipajes del pasajero. Si el pasajero existe pero no
   tiene equipajes, responde `200` con `[]`. Si el pasajero no existe, `404`.

@@ -16,7 +16,7 @@ body:
     }
 bodyType: application/json
 description: |-
-  `PUT /api/Equipaje/{idPasajero}/{codigoEtiqueta}`
+  `PUT /api/equipajes/{idPasajero}/{codigoEtiqueta}`
 
   Actualiza el peso y el tipo del equipaje, y recalcula `tarifaExceso`.
   El código de etiqueta viaja en la ruta y no se modifica.
@@ -35,7 +35,7 @@ headers:
 method: PUT
 name: Actualizar equipaje
 sortPriority: 5.0
-url: ${[ base_url ]}/api/Equipaje/${[ pasajero_id ]}/${[ codigo_etiqueta ]}
+url: ${[ base_url ]}/api/equipajes/${[ pasajero_id ]}/${[ codigo_etiqueta ]}
 urlParameters: []
 settingSendCookies:
   enabled: false

@@ -1,4 +1,4 @@
-// Datos que llegan en el body de POST/PUT /api/Equipaje/{idPasajero}.
+// Datos que llegan en el body de POST/PUT /api/equipajes/{idPasajero}.
 // El ID del pasajero va en la ruta y la tarifa la calcula el servidor.
 public class EquipajeRequest
 {

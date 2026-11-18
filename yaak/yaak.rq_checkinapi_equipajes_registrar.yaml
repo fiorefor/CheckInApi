@@ -16,7 +16,7 @@ body:
     }
 bodyType: application/json
 description: |-
-  `POST /api/Equipaje/{idPasajero}`
+  `POST /api/equipajes/{idPasajero}`
 
   Registra un equipaje para el pasajero y devuelve `201 Created` con la
   `tarifaExceso` calculada. Un equipaje de `20 kg` en un vuelo nacional
@@ -36,7 +36,7 @@ headers:
 method: POST
 name: Registrar equipaje
 sortPriority: 4.0
-url: ${[ base_url ]}/api/Equipaje/${[ pasajero_id ]}
+url: ${[ base_url ]}/api/equipajes/${[ pasajero_id ]}
 urlParameters: []
 settingSendCookies:
   enabled: false

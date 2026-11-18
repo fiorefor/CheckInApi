@@ -1,60 +1,82 @@
 @CheckInApi_HostAddress = http://localhost:5129
+@idPasajero = 1
 @documento = 12345678
+@codigoEtiqueta = EQ-001
 
-# Obtener todos los pasajeros
-GET {{CheckInApi_HostAddress}}/api/Pasajero
+# Menú de la API
+GET {{CheckInApi_HostAddress}}/api
+Accept: application/json
+
+###
+
+# Listar pasajeros
+GET {{CheckInApi_HostAddress}}/api/pasajeros
+Accept: application/json
+
+###
+
+# Obtener un pasajero por ID
+GET {{CheckInApi_HostAddress}}/api/pasajeros/{{idPasajero}}
 Accept: application/json
 
 ###
 
 # Obtener un pasajero por documento
-GET {{CheckInApi_HostAddress}}/api/Pasajero/{{documento}}
+GET {{CheckInApi_HostAddress}}/api/pasajeros/documento/{{documento}}
 Accept: application/json
 
 ###
 
-# Agregar un pasajero
-POST {{CheckInApi_HostAddress}}/api/Pasajero
+# Crear un pasajero
+POST {{CheckInApi_HostAddress}}/api/pasajeros
+Content-Type: application/json
+
+{
+  "nombre": "Juan",
+  "apellido": "Pampa",
+  "documento": "87654321",
+  "email": "juanpampa@mail.com",
+  "telefono": "+54 11 5555-1234",
+  "pasajeroFrecuente": "1234567890"
+}
+
+###
+
+# Actualizar un pasajero por ID
+PUT {{CheckInApi_HostAddress}}/api/pasajeros/{{idPasajero}}
 Content-Type: application/json
 
 {
   "nombre": "Ada",
   "apellido": "Lovelace",
   "documento": "{{documento}}",
-  "pasajeroFrecuente": "true"
+  "email": "ada@mail.com",
+  "telefono": "+54 11 5555-1234",
+  "pasajeroFrecuente": "1234567890"
 }
 
 ###
 
-# Actualizar un pasajero existente (el documento debe existir)
-PUT {{CheckInApi_HostAddress}}/api/Pasajero
-Content-Type: application/json
-
-{
-  "nombre": "Ada",
-  "apellido": "Byron",
-  "documento": "{{documento}}",
-  "pasajeroFrecuente": "true"
-}
-
-###
-
-# Eliminar un pasajero por documento
-DELETE {{CheckInApi_HostAddress}}/api/Pasajero/{{documento}}
+# Eliminar un pasajero por ID
+DELETE {{CheckInApi_HostAddress}}/api/pasajeros/{{idPasajero}}
 Accept: application/json
 
 ###
 
-@idPasajero = 1
+# Listar pasajes
+GET {{CheckInApi_HostAddress}}/api/pasajes
+Accept: application/json
+
+###
 
 # Consultar el pasaje de un pasajero
-GET {{CheckInApi_HostAddress}}/api/Pasajes/{{idPasajero}}
+GET {{CheckInApi_HostAddress}}/api/pasajes/{{idPasajero}}
 Accept: application/json
 
 ###
 
 # Asignar un pasaje
-POST {{CheckInApi_HostAddress}}/api/Pasajes/{{idPasajero}}
+POST {{CheckInApi_HostAddress}}/api/pasajes/{{idPasajero}}
 Content-Type: application/json
 
 {
@@ -66,7 +88,7 @@ Content-Type: application/json
 ###
 
 # Actualizar un pasaje existente
-PUT {{CheckInApi_HostAddress}}/api/Pasajes/{{idPasajero}}
+PUT {{CheckInApi_HostAddress}}/api/pasajes/{{idPasajero}}
 Content-Type: application/json
 
 {
@@ -78,5 +100,52 @@ Content-Type: application/json
 ###
 
 # Eliminar el pasaje de un pasajero
-DELETE {{CheckInApi_HostAddress}}/api/Pasajes/{{idPasajero}}
+DELETE {{CheckInApi_HostAddress}}/api/pasajes/{{idPasajero}}
+Accept: application/json
+
+###
+
+# Listar todos los equipajes
+GET {{CheckInApi_HostAddress}}/api/equipajes
+Accept: application/json
+
+###
+
+# Listar los equipajes de un pasajero
+GET {{CheckInApi_HostAddress}}/api/equipajes/{{idPasajero}}
+Accept: application/json
+
+###
+
+# Obtener un equipaje por código
+GET {{CheckInApi_HostAddress}}/api/equipajes/{{idPasajero}}/{{codigoEtiqueta}}
+Accept: application/json
+
+###
+
+# Registrar un equipaje
+POST {{CheckInApi_HostAddress}}/api/equipajes/{{idPasajero}}
+Content-Type: application/json
+
+{
+  "codigoEtiqueta": "EQ-099",
+  "tipoEquipaje": "Bodega",
+  "pesoKg": 20
+}
+
+###
+
+# Actualizar un equipaje por código
+PUT {{CheckInApi_HostAddress}}/api/equipajes/{{idPasajero}}/{{codigoEtiqueta}}
+Content-Type: application/json
+
+{
+  "tipoEquipaje": "Mano",
+  "pesoKg": 10
+}
+
+###
+
+# Eliminar un equipaje por código
+DELETE {{CheckInApi_HostAddress}}/api/equipajes/{{idPasajero}}/{{codigoEtiqueta}}
 Accept: application/json

@@ -7,13 +7,13 @@ updatedAt: "2026-11-17T12:00:00.000000000"
 name: Equipajes
 folderId: null
 description: |-
-  Endpoints de `EquipajeController` (ruta base `/api/Equipaje`).
+  Endpoints de `EquipajeController` (ruta base `/api/equipajes`).
 
   El equipaje pertenece a un pasajero y se identifica por su `codigoEtiqueta`,
   que es obligatorio y no se puede repetir para el mismo pasajero.
 
   Antes de registrar un equipaje, el pasajero debe tener un pasaje:
-  ejecutá primero **Pasajes → Asignar pasaje** (`POST /api/Pasajes/{idPasajero}`).
+  ejecutá primero **Pasajes → Asignar pasaje** (`POST /api/pasajes/{idPasajero}`).
 
   Reglas de peso: `15 kg` para vuelos nacionales (`N`) y `23 kg` para
   internacionales (`I`). Cada kilo excedido cuesta `$2.500`.

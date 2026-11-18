@@ -16,7 +16,7 @@ body:
     }
 bodyType: application/json
 description: |-
-  `POST /api/Pasajes/{idPasajero}`
+  `POST /api/pasajes/{idPasajero}`
 
   Crea y asigna un pasaje al pasajero indicado. El servidor asigna
   automáticamente el primer asiento libre del vuelo (`1A`, `1B`, ...).
@@ -39,7 +39,7 @@ headers:
 method: POST
 name: Asignar pasaje
 sortPriority: 3.0
-url: ${[ base_url ]}/api/Pasajes/${[ pasajero_id ]}
+url: ${[ base_url ]}/api/pasajes/${[ pasajero_id ]}
 urlParameters: []
 settingSendCookies:
   enabled: false

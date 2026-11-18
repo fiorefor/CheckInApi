@@ -7,14 +7,14 @@ createdAt: "2026-11-17T12:00:00.000000000"
 updatedAt: "2026-11-17T12:00:00.000000000"
 name: Eliminar equipaje
 method: DELETE
-url: "${[ base_url ]}/api/Equipaje/${[ pasajero_id ]}/${[ codigo_etiqueta ]}"
+url: "${[ base_url ]}/api/equipajes/${[ pasajero_id ]}/${[ codigo_etiqueta ]}"
 sortPriority: 6
 headers:
   - name: Accept
     value: application/json
     enabled: true
 description: |-
-  `DELETE /api/Equipaje/{idPasajero}/{codigoEtiqueta}`
+  `DELETE /api/equipajes/{idPasajero}/{codigoEtiqueta}`
 
   Quita el equipaje de la lista del pasajero y reescribe `Data/pasajeros.txt`.
   Devuelve `200` con `{ "mensaje": ... }`, o `404` si el pasajero o el

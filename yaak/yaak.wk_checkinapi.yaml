@@ -17,9 +17,9 @@ description: |-
   Ese valor está en la variable de entorno `base_url`.
 
   Carpetas:
-  - **Pasajeros**: `/api/Pasajero` (listar, obtener, crear, actualizar, eliminar)
-  - **Pasajes**: `/api/Pasajes` (listar, obtener, asignar, actualizar, eliminar)
-  - **Equipajes**: `/api/Equipaje` (listar, obtener, registrar, actualizar, eliminar)
+  - **Pasajeros**: `/api/pasajeros` (listar, obtener, crear, actualizar, eliminar)
+  - **Pasajes**: `/api/pasajes` (listar, obtener, asignar, actualizar, eliminar)
+  - **Equipajes**: `/api/equipajes` (listar, obtener, registrar, actualizar, eliminar)
 
   Los equipajes se guardan dentro de la línea del pasajero en `Data/pasajeros.txt`:
   sobreviven al reinicio de la API y se eliminan junto con el pasajero.

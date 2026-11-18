@@ -55,5 +55,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 app.MapGet("/", () => Results.Redirect("/api"));
+app.MapFallback(() => Results.NotFound(new { mensaje = "La ruta solicitada no existe." }));
 
 app.Run();

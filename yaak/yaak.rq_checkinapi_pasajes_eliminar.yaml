@@ -7,14 +7,14 @@ createdAt: "2026-11-17T12:00:00.000000000"
 updatedAt: "2026-11-17T12:00:00.000000000"
 name: Eliminar pasaje
 method: DELETE
-url: "${[ base_url ]}/api/Pasajes/${[ pasajero_id ]}"
+url: "${[ base_url ]}/api/pasajes/${[ pasajero_id ]}"
 sortPriority: 5
 headers:
   - name: Accept
     value: application/json
     enabled: true
 description: |-
-  `DELETE /api/Pasajes/{idPasajero}`
+  `DELETE /api/pasajes/{idPasajero}`
 
   Quita el pasaje del pasajero (el pasajero se conserva). Devuelve `200`
   con `{ "mensaje": "Pasaje eliminado correctamente." }`, o `404` si el

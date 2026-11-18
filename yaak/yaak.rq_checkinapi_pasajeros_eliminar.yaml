@@ -7,13 +7,13 @@ createdAt: "2026-11-17T12:00:00.000000000"
 updatedAt: "2026-11-17T12:00:00.000000000"
 name: Eliminar pasajero
 method: DELETE
-url: "${[ base_url ]}/api/Pasajero/${[ pasajero_id ]}"
+url: "${[ base_url ]}/api/pasajeros/${[ pasajero_id ]}"
 sortPriority: 5
 headers:
   - name: Accept
     value: application/json
     enabled: true
 description: |-
-  `DELETE /api/Pasajero/{id}`
+  `DELETE /api/pasajeros/{id}`
 
   Elimina el pasajero indicado. Devuelve `400 Bad Request` si el ID no existe.

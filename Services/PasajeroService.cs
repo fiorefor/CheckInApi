@@ -135,7 +135,7 @@ public class PasajeroService
         }
     }
 
-    public (bool exito, string mensaje) Actualizar(int id, PasajeroRequest datos)
+    public (bool exito, string mensaje, bool noEncontrado) Actualizar(int id, PasajeroRequest datos)
     {
         try
         {
@@ -172,36 +172,36 @@ public class PasajeroService
 
             if (!repositorio.Actualizar(actualizado))
             {
-                return (false, "Error al actualizar el pasajero en el repositorio.");
+                return (false, "Error al actualizar el pasajero en el repositorio.", false);
             }
-            return (true, "Pasajero actualizado exitosamente.");
+            return (true, "Pasajero actualizado exitosamente.", false);
         }
         catch (PasajeroNoEncontradoException ex)
         {
-            return (false, ex.Message);
+            return (false, ex.Message, true);
         }
         catch (PasajeroExistenteException ex)
         {
-            return (false, ex.Message);
+            return (false, ex.Message, false);
         }
         catch (DatosInvalidosException ex)
         {
-            return (false, $"Datos inválidos: {ex.Message}");
+            return (false, $"Datos inválidos: {ex.Message}", false);
         }
     }
 
-    public (bool exito, string mensaje) Eliminar(int id)
+    public (bool exito, string mensaje, bool noEncontrado) Eliminar(int id)
     {
         if (repositorio.ObtenerPorId(id) == null)
         {
-            return (false, "No existe un pasajero con el ID proporcionado.");
+            return (false, "No existe un pasajero con el ID proporcionado.", true);
         }
 
         bool exito = repositorio.Eliminar(id);
         if (!exito)
         {
-            return (false, "Error al eliminar el pasajero del repositorio.");
+            return (false, "Error al eliminar el pasajero del repositorio.", false);
         }
-        return (true, "Pasajero eliminado exitosamente.");
+        return (true, "Pasajero eliminado exitosamente.", false);
     }
 }

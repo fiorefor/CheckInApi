@@ -10,7 +10,7 @@ authenticationType: null
 body: {}
 bodyType: null
 description: |-
-  `GET /api/Pasajes`
+  `GET /api/pasajes`
 
   Devuelve únicamente los pasajes asignados (los pasajeros sin pasaje no aparecen).
 headers:
@@ -21,7 +21,7 @@ headers:
 method: GET
 name: Listar pasajes
 sortPriority: 1.0
-url: ${[ base_url ]}/api/Pasajes
+url: ${[ base_url ]}/api/pasajes
 urlParameters: []
 settingSendCookies:
   enabled: false

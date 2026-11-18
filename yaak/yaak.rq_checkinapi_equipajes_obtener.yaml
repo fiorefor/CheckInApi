@@ -7,14 +7,14 @@ createdAt: "2026-11-17T12:00:00.000000000"
 updatedAt: "2026-11-17T12:00:00.000000000"
 name: Obtener equipaje por código
 method: GET
-url: "${[ base_url ]}/api/Equipaje/${[ pasajero_id ]}/${[ codigo_etiqueta ]}"
+url: "${[ base_url ]}/api/equipajes/${[ pasajero_id ]}/${[ codigo_etiqueta ]}"
 sortPriority: 3
 headers:
   - name: Accept
     value: application/json
     enabled: true
 description: |-
-  `GET /api/Equipaje/{idPasajero}/{codigoEtiqueta}`
+  `GET /api/equipajes/{idPasajero}/{codigoEtiqueta}`
 
   Busca un equipaje por su código de etiqueta dentro del pasajero indicado,
   sin distinguir mayúsculas. Devuelve `404` si el pasajero o el equipaje no existen.

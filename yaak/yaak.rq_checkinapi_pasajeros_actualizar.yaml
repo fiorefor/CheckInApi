@@ -19,7 +19,7 @@ body:
     }
 bodyType: application/json
 description: |-
-  `PUT /api/Pasajero/{id}`
+  `PUT /api/pasajeros/{id}`
 
   Actualiza los datos del pasajero indicado (mismas validaciones que el alta).
   Si el pasajero tiene un pasaje, se conserva.
@@ -35,7 +35,7 @@ headers:
 method: PUT
 name: Actualizar pasajero
 sortPriority: 4.0
-url: ${[ base_url ]}/api/Pasajero/${[ pasajero_id ]}
+url: ${[ base_url ]}/api/pasajeros/${[ pasajero_id ]}
 urlParameters: []
 settingSendCookies:
   enabled: false

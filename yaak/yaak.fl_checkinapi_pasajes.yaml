@@ -7,7 +7,7 @@ updatedAt: "2026-11-17T12:00:00.000000000"
 name: Pasajes
 folderId: null
 description: |-
-  Endpoints de `PasajesController` (ruta base `/api/Pasajes`).
+  Endpoints de `PasajesController` (ruta base `/api/pasajes`).
 
   `tipoVuelo`: `N` (nacional) o `I` (internacional).
   `tipoTarifa`: `P`, `B`, `PE` o `F`.

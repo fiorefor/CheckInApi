@@ -19,7 +19,7 @@ body:
     }
 bodyType: application/json
 description: |-
-  `POST /api/Pasajero`
+  `POST /api/pasajeros`
 
   Cuerpo: `PasajeroRequest` (`nombre`, `apellido`, `documento`, `email`, `telefono`, `pasajeroFrecuente`).
 
@@ -37,7 +37,7 @@ headers:
 method: POST
 name: Crear pasajero
 sortPriority: 3.0
-url: ${[ base_url ]}/api/Pasajero
+url: ${[ base_url ]}/api/pasajeros
 urlParameters: []
 settingSendCookies:
   enabled: false

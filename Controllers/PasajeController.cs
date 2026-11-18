@@ -6,7 +6,7 @@ using CheckInApi.Services;
 namespace CheckInApi.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/pasajes")]
     public class PasajesController : ControllerBase
     {
         private readonly PasajeService _pasajeService;
@@ -17,13 +17,13 @@ namespace CheckInApi.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult ObtenerTodos()
         {
             return Ok(_pasajeService.ListarPasajes());
         }
 
         [HttpGet("{idPasajero}")]
-        public IActionResult GetById(int idPasajero)
+        public IActionResult ObtenerPorId(int idPasajero)
         {
             var pasaje = _pasajeService.ObtenerPasaje(idPasajero);
             if (pasaje == null)
@@ -33,7 +33,7 @@ namespace CheckInApi.Controllers
         }
 
         [HttpPost("{idPasajero:int}")]
-        public IActionResult Create(int idPasajero, [FromBody] PasajeRequest request)
+        public IActionResult Agregar(int idPasajero, [FromBody] PasajeRequest request)
         {
             var resultado = _pasajeService.AgregarPasaje(idPasajero, request);
             if (!resultado.exito)
@@ -45,11 +45,11 @@ namespace CheckInApi.Controllers
             }
 
             var pasajeCreado = _pasajeService.ObtenerPasaje(idPasajero);
-            return CreatedAtAction(nameof(GetById), new { idPasajero }, pasajeCreado);
+            return CreatedAtAction(nameof(ObtenerPorId), new { idPasajero }, pasajeCreado);
         }
 
         [HttpPut("{idPasajero:int}")]
-        public IActionResult Update(int idPasajero, [FromBody] PasajeRequest request)
+        public IActionResult Actualizar(int idPasajero, [FromBody] PasajeRequest request)
         {
             var resultado = _pasajeService.ActualizarPasaje(idPasajero, request);
             if (!resultado.exito)
@@ -64,7 +64,7 @@ namespace CheckInApi.Controllers
         }
 
         [HttpDelete("{idPasajero:int}")]
-        public IActionResult Delete(int idPasajero)
+        public IActionResult Eliminar(int idPasajero)
         {
             var resultado = _pasajeService.EliminarPasaje(idPasajero);
             if (resultado.noEncontrado)

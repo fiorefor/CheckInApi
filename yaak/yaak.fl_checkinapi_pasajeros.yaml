@@ -7,7 +7,7 @@ updatedAt: "2026-11-17T12:00:00.000000000"
 name: Pasajeros
 folderId: null
 description: |-
-  Endpoints de `PasajeroController` (ruta base `/api/Pasajero`).
+  Endpoints de `PasajeroController` (ruta base `/api/pasajeros`).
   El alta y la actualización requieren un DNI de 7 u 8 dígitos y un email válido.
 authentication: {}
 authenticationType: null

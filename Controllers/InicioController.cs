@@ -18,42 +18,42 @@ public class InicioController : ControllerBase
                 new
                 {
                     entidad = "Pasajeros",
-                    ruta = "/api/Pasajero",
+                    ruta = "/api/pasajeros",
                     operaciones = new[]
                     {
-                        "GET /api/Pasajero",
-                        "GET /api/Pasajero/{id}",
-                        "GET /api/Pasajero/documento/{documento}",
-                        "POST /api/Pasajero",
-                        "PUT /api/Pasajero/{id}",
-                        "DELETE /api/Pasajero/{id}"
+                        "GET /api/pasajeros",
+                        "GET /api/pasajeros/{id}",
+                        "GET /api/pasajeros/documento/{documento}",
+                        "POST /api/pasajeros",
+                        "PUT /api/pasajeros/{id}",
+                        "DELETE /api/pasajeros/{id}"
                     }
                 },
                 new
                 {
                     entidad = "Pasajes",
-                    ruta = "/api/Pasajes",
+                    ruta = "/api/pasajes",
                     operaciones = new[]
                     {
-                        "GET /api/Pasajes",
-                        "GET /api/Pasajes/{idPasajero}",
-                        "POST /api/Pasajes/{idPasajero}",
-                        "PUT /api/Pasajes/{idPasajero}",
-                        "DELETE /api/Pasajes/{idPasajero}"
+                        "GET /api/pasajes",
+                        "GET /api/pasajes/{idPasajero}",
+                        "POST /api/pasajes/{idPasajero}",
+                        "PUT /api/pasajes/{idPasajero}",
+                        "DELETE /api/pasajes/{idPasajero}"
                     }
                 },
                 new
                 {
                     entidad = "Equipajes",
-                    ruta = "/api/Equipaje",
+                    ruta = "/api/equipajes",
                     operaciones = new[]
                     {
-                        "GET /api/Equipaje",
-                        "GET /api/Equipaje/{idPasajero}",
-                        "GET /api/Equipaje/{idPasajero}/{codigoEtiqueta}",
-                        "POST /api/Equipaje/{idPasajero}",
-                        "PUT /api/Equipaje/{idPasajero}/{codigoEtiqueta}",
-                        "DELETE /api/Equipaje/{idPasajero}/{codigoEtiqueta}"
+                        "GET /api/equipajes",
+                        "GET /api/equipajes/{idPasajero}",
+                        "GET /api/equipajes/{idPasajero}/{codigoEtiqueta}",
+                        "POST /api/equipajes/{idPasajero}",
+                        "PUT /api/equipajes/{idPasajero}/{codigoEtiqueta}",
+                        "DELETE /api/equipajes/{idPasajero}/{codigoEtiqueta}"
                     }
                 }
             }
