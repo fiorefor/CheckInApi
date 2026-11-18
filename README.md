@@ -16,18 +16,18 @@ dotnet run --launch-profile http
 
 La API queda disponible en `http://localhost:5129`. La raíz (`/`) redirige a `/api`, que devuelve un menú con todos los módulos y sus operaciones. En el entorno de desarrollo también se publica el documento OpenAPI en `http://localhost:5129/openapi/v1.json`.
 
-## Endpoints - Clase del 14/10/2026
+## Endpoints de pasajeros
 
-La ruta base es `/api/Pasajero`. Cada pasajero se identifica por un `id` numérico que asigna el servidor al crearlo.
+La ruta base es `/api/pasajeros`. Cada pasajero se identifica por un `id` numérico que asigna el servidor al crearlo.
 
 | Método | Ruta | Descripción |
 | --- | --- | --- |
-| `GET` | `/api/Pasajero` | Obtiene todos los pasajeros. |
-| `GET` | `/api/Pasajero/{id}` | Busca un pasajero por ID. Devuelve `404` si no existe. |
-| `GET` | `/api/Pasajero/documento/{documento}` | Busca un pasajero por DNI. Devuelve `404` si no existe. |
-| `POST` | `/api/Pasajero` | Agrega un pasajero. Devuelve `400` si el DNI ya está registrado o los datos no son válidos. |
-| `PUT` | `/api/Pasajero/{id}` | Actualiza un pasajero. Conserva su pasaje y sus equipajes. Devuelve `404` si no existe y `400` si los datos no son válidos. |
-| `DELETE` | `/api/Pasajero/{id}` | Elimina un pasajero. Devuelve `404` si no existe. |
+| `GET` | `/api/pasajeros` | Obtiene todos los pasajeros. |
+| `GET` | `/api/pasajeros/{id}` | Busca un pasajero por ID. Devuelve `404` si no existe. |
+| `GET` | `/api/pasajeros/documento/{documento}` | Busca un pasajero por DNI. Devuelve `404` si no existe. |
+| `POST` | `/api/pasajeros` | Agrega un pasajero. Devuelve `201` si se crea y `400` si el DNI ya está registrado o los datos no son válidos. |
+| `PUT` | `/api/pasajeros/{id}` | Actualiza un pasajero. Conserva su pasaje y sus equipajes. Devuelve `404` si no existe y `400` si los datos no son válidos. |
+| `DELETE` | `/api/pasajeros/{id}` | Elimina un pasajero. Devuelve `404` si no existe. |
 
 El cuerpo de `POST` y `PUT` es:
 
@@ -94,12 +94,12 @@ Cada pasajero puede registrar varios equipajes, identificados por su código de 
 
 | Método | Ruta | Descripción |
 | --- | --- | --- |
-| `GET` | `/api/Equipaje` | Lista todos los equipajes. |
-| `GET` | `/api/Equipaje/{idPasajero}` | Lista los equipajes de un pasajero. Devuelve `404` si el pasajero no existe. |
-| `GET` | `/api/Equipaje/{idPasajero}/{codigoEtiqueta}` | Obtiene un equipaje. Devuelve `404` si no existe. |
-| `POST` | `/api/Equipaje/{idPasajero}` | Registra un equipaje. Devuelve `201` si se crea y `400` si el pasajero no existe, no tiene pasaje, el código ya está usado o los datos no son válidos. |
-| `PUT` | `/api/Equipaje/{idPasajero}/{codigoEtiqueta}` | Actualiza el tipo y el peso. Devuelve `404` si no existe el pasajero, el pasaje o el equipaje, y `400` si el peso no es válido. |
-| `DELETE` | `/api/Equipaje/{idPasajero}/{codigoEtiqueta}` | Elimina un equipaje. Devuelve `404` si no existe. |
+| `GET` | `/api/equipajes` | Lista todos los equipajes. |
+| `GET` | `/api/equipajes/{idPasajero}` | Lista los equipajes de un pasajero. Devuelve `404` si el pasajero no existe. |
+| `GET` | `/api/equipajes/{idPasajero}/{codigoEtiqueta}` | Obtiene un equipaje. Devuelve `404` si no existe. |
+| `POST` | `/api/equipajes/{idPasajero}` | Registra un equipaje. Devuelve `201` si se crea y `400` si el pasajero no existe, no tiene pasaje, el código ya está usado o los datos no son válidos. |
+| `PUT` | `/api/equipajes/{idPasajero}/{codigoEtiqueta}` | Actualiza el tipo y el peso. Devuelve `404` si no existe el pasajero, el pasaje o el equipaje, y `400` si el peso no es válido. |
+| `DELETE` | `/api/equipajes/{idPasajero}/{codigoEtiqueta}` | Elimina un equipaje. Devuelve `404` si no existe. |
 
 El cuerpo de `POST` es:
 
@@ -124,13 +124,11 @@ Cada kilo por encima del límite cuesta $2.500. Por ejemplo, 20 kg en un vuelo n
 
 ## Errores
 
-Los endpoints de pasajes y equipaje, y los errores no controlados, responden con este formato JSON:
+Los endpoints y los errores no controlados responden con este formato JSON:
 
 ```json
 { "mensaje": "Descripción del error." }
 ```
-
-Los endpoints de pasajeros devuelven el mensaje como texto plano.
 
 Los datos inválidos y los JSON mal formados devuelven `400`. Los problemas de lectura o escritura del archivo de datos devuelven `500`.
 
