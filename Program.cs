@@ -2,6 +2,9 @@ using CheckInApi.Modelos.Exceptions;
 using CheckInApi.Services;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using CheckInApi.Repositorios;
+
+var builder = WebApplication.CreateBuilder(args);
 
 var builder = WebApplication.CreateBuilder(args);
 
