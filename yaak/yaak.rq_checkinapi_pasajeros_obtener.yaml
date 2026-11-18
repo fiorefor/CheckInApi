@@ -1,0 +1,19 @@
+type: http_request
+model: http_request
+id: rq_checkinapi_pasajeros_obtener
+workspaceId: wk_checkinapi
+folderId: fl_checkinapi_pasajeros
+createdAt: "2026-11-17T12:00:00.000000000"
+updatedAt: "2026-11-17T12:00:00.000000000"
+name: Obtener pasajero por ID
+method: GET
+url: "${[ base_url ]}/api/Pasajero/${[ pasajero_id ]}"
+sortPriority: 2
+headers:
+  - name: Accept
+    value: application/json
+    enabled: true
+description: |-
+  `GET /api/Pasajero/{id}`
+
+  Devuelve `404 Not Found` con un mensaje si el ID no existe.

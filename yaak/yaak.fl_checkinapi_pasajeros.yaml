@@ -1,0 +1,15 @@
+type: folder
+model: folder
+id: fl_checkinapi_pasajeros
+workspaceId: wk_checkinapi
+createdAt: "2026-11-17T12:00:00.000000000"
+updatedAt: "2026-11-17T12:00:00.000000000"
+name: Pasajeros
+folderId: null
+description: |-
+  Endpoints de `PasajeroController` (ruta base `/api/Pasajero`).
+  El alta y la actualización requieren un DNI de 7 u 8 dígitos y un email válido.
+authentication: {}
+authenticationType: null
+headers: []
+sortPriority: 1

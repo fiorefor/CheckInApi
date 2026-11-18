@@ -1,0 +1,19 @@
+type: http_request
+model: http_request
+id: rq_checkinapi_pasajeros_eliminar
+workspaceId: wk_checkinapi
+folderId: fl_checkinapi_pasajeros
+createdAt: "2026-11-17T12:00:00.000000000"
+updatedAt: "2026-11-17T12:00:00.000000000"
+name: Eliminar pasajero
+method: DELETE
+url: "${[ base_url ]}/api/Pasajero/${[ pasajero_id ]}"
+sortPriority: 5
+headers:
+  - name: Accept
+    value: application/json
+    enabled: true
+description: |-
+  `DELETE /api/Pasajero/{id}`
+
+  Elimina el pasajero indicado. Devuelve `400 Bad Request` si el ID no existe.

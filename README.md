@@ -80,6 +80,16 @@ El cuerpo de `POST` y `PUT` es:
 
 El archivo [CheckInApi.http](./CheckInApi.http) contiene ejemplos para probar los endpoints anteriores. Para ejecutarlos desde VS Code, instala la extensión [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client), inicia la API con el comando indicado en **Ejecutar** y selecciona **Send Request** sobre la petición que quieras probar. No es necesario usar `curl`.
 
+## Probar la API con Yaak
+
+La carpeta [yaak/](./yaak) contiene un workspace de [Yaak](https://yaak.app) con todas las requests de pasajeros y pasajes, listo para importar.
+
+1. Iniciá la API con el comando de **Ejecutar**.
+2. En Yaak: menú de workspaces → **New Workspace** → **Open Folder** → elegí la carpeta `yaak`.
+3. Seleccioná el entorno **Local** y ya podés enviar las requests.
+
+La colección usa la variable `base_url` (`http://localhost:5129`) y `pasajero_id`, que se configura en el entorno. Más detalles en [yaak/README.md](./yaak/README.md).
+
 ## Persistencia
 
 El repositorio de archivo guarda los pasajeros en `pasajeros.txt`, ubicado en el directorio de salida de la aplicación (`AppContext.BaseDirectory`). En una ejecución local típica, ese directorio está debajo de `bin/Debug/net10.0/`. El archivo usa una línea por pasajero y `|` como separador entre campos.

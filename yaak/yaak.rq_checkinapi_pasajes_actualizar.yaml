@@ -1,0 +1,31 @@
+type: http_request
+model: http_request
+id: rq_checkinapi_pasajes_actualizar
+workspaceId: wk_checkinapi
+folderId: fl_checkinapi_pasajes
+createdAt: "2026-11-17T12:00:00.000000000"
+updatedAt: "2026-11-17T12:00:00.000000000"
+name: Actualizar pasaje
+method: PUT
+url: "${[ base_url ]}/api/Pasajes/${[ pasajero_id ]}"
+sortPriority: 4
+bodyType: application/json
+body:
+  text: |-
+    {
+      "tipoVuelo": "I",
+      "tipoTarifa": "PE",
+      "nroVuelo": "AR5678"
+    }
+headers:
+  - name: Content-Type
+    value: application/json
+    enabled: true
+  - name: Accept
+    value: application/json
+    enabled: true
+description: |-
+  `PUT /api/Pasajes/{idPasajero}`
+
+  Recalcula precio base y precio final según `tipoVuelo` y `tipoTarifa`.
+  El pasajero debe tener ya un pasaje asignado; si no, devuelve `404`.

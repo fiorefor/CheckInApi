@@ -1,0 +1,57 @@
+type: http_request
+model: http_request
+id: rq_checkinapi_pasajeros_actualizar
+createdAt: 2026-11-17T12:00:00
+updatedAt: 2026-11-18T00:40:12.109976800
+workspaceId: wk_checkinapi
+folderId: fl_checkinapi_pasajeros
+authentication: {}
+authenticationType: null
+body:
+  text: |-
+    {
+      "nombre": "Ada",
+      "apellido": "Lovelace",
+      "documento": "${[ documento ]}",
+      "email": "ada@mail.com",
+      "telefono": "+54 11 5555-1234",
+      "pasajeroFrecuente": "1234567890"
+    }
+bodyType: application/json
+description: |-
+  `PUT /api/Pasajero/{id}`
+
+  Actualiza los datos del pasajero indicado (mismas validaciones que el alta).
+  Si el pasajero tiene un pasaje, se conserva.
+headers:
+- enabled: true
+  name: Content-Type
+  value: application/json
+  id: null
+- enabled: true
+  name: Accept
+  value: application/json
+  id: null
+method: PUT
+name: Actualizar pasajero
+sortPriority: 4.0
+url: ${[ base_url ]}/api/Pasajero/${[ pasajero_id ]}
+urlParameters: []
+settingSendCookies:
+  enabled: false
+  value: true
+settingStoreCookies:
+  enabled: false
+  value: true
+settingValidateCertificates:
+  enabled: false
+  value: true
+settingFollowRedirects:
+  enabled: false
+  value: true
+settingRequestTimeout:
+  enabled: false
+  value: 0
+settingHttpVersion:
+  enabled: false
+  value: auto
